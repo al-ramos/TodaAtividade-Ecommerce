@@ -6,10 +6,12 @@ import { useSession, signOut } from 'next-auth/react'
 import { ShoppingCart, User, LogOut, BookOpen, Menu, X } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import { useCart } from '@/lib/cart-context'
 
 export default function Header() {
   const { data: session } = useSession()
   const [menuOpen, setMenuOpen] = useState(false)
+  const { count, openCart } = useCart()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur">
@@ -36,13 +38,18 @@ export default function Header() {
 
         {/* Ações */}
         <div className="flex items-center gap-3">
-          <Link
-            href="/carrinho"
+          <button
+            onClick={openCart}
             className="relative rounded-full p-2 text-gray-600 hover:bg-gray-100 hover:text-blue-600 transition-colors"
             aria-label="Carrinho"
           >
             <ShoppingCart className="h-5 w-5" />
-          </Link>
+            {count > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white">
+                {count > 9 ? '9+' : count}
+              </span>
+            )}
+          </button>
 
           {session ? (
             <div className="relative group">
@@ -102,9 +109,27 @@ export default function Header() {
       {/* Mobile nav */}
       <div className={cn('md:hidden border-t border-gray-100 bg-white px-4 pb-4', menuOpen ? 'block' : 'hidden')}>
         <nav className="flex flex-col gap-3 pt-3">
-          <Link href="/atividades" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>Catálogo</Link>
-          <Link href="/atividades?grade=1ano" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>Anos Iniciais</Link>
-          <Link href="/atividades?grade=6ano" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>Anos Finais</Link>
+          <Link
+            href="/atividades"
+            className="text-sm font-medium text-gray-700"
+            onClick={() => setMenuOpen(false)}
+          >
+            Catálogo
+          </Link>
+          <Link
+            href="/atividades?grade=1ano"
+            className="text-sm font-medium text-gray-700"
+            onClick={() => setMenuOpen(false)}
+          >
+            Anos Iniciais
+          </Link>
+          <Link
+            href="/atividades?grade=6ano"
+            className="text-sm font-medium text-gray-700"
+            onClick={() => setMenuOpen(false)}
+          >
+            Anos Finais
+          </Link>
         </nav>
       </div>
     </header>

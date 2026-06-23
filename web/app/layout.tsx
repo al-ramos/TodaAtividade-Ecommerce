@@ -3,6 +3,8 @@ import { Inter } from 'next/font/google'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import SessionProvider from '@/components/auth/SessionProvider'
+import { CartProvider } from '@/lib/cart-context'
+import { CartDrawer } from '@/components/cart/CartDrawer'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { Toaster } from 'sonner'
@@ -45,12 +47,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="pt-BR" className={inter.variable}>
       <body className="min-h-screen bg-gray-50 antialiased">
         <SessionProvider session={session}>
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-          <Toaster richColors position="top-right" />
+          <CartProvider>
+            <div className="flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+            <CartDrawer />
+            <Toaster richColors position="top-right" />
+          </CartProvider>
         </SessionProvider>
       </body>
     </html>

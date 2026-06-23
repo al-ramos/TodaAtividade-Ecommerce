@@ -72,7 +72,7 @@ export interface Download {
 // ─── Carrinho (client-side) ──────────────────────────────────────────────────
 export interface CartItem {
   product: Product
-  addedAt: string
+  quantity: number
 }
 
 // ─── Filtros do catálogo ─────────────────────────────────────────────────────

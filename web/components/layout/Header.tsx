@@ -28,15 +28,15 @@ export default function Header() {
           <Link href="/atividades" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
             Catálogo
           </Link>
-          <Link href="/atividades?grade=1ano" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
+          <Link href={"/atividades?grade=1ano"} className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
             Anos Iniciais
           </Link>
-          <Link href="/atividades?grade=6ano" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
+          <Link href={"/atividades?grade=6ano"} className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
             Anos Finais
           </Link>
         </nav>
 
-        {/* Ações */}
+        {/* Actions */}
         <div className="flex items-center gap-3">
           <button
             onClick={openCart}
@@ -68,6 +68,7 @@ export default function Header() {
                   </div>
                 )}
               </button>
+
               {/* Dropdown */}
               <div className="absolute right-0 top-full mt-2 w-48 hidden group-hover:block rounded-lg border border-gray-200 bg-white shadow-lg">
                 <div className="border-b border-gray-100 px-4 py-3">
@@ -75,8 +76,11 @@ export default function Header() {
                   <p className="text-xs text-gray-500 truncate">{session.user?.email}</p>
                 </div>
                 <div className="py-1">
+                  <Link href="/perfil" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                    <User className="h-4 w-4" /> Meu perfil
+                  </Link>
                   <Link href="/pedidos" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                    <User className="h-4 w-4" /> Minhas compras
+                    <ShoppingCart className="h-4 w-4" /> Minhas compras
                   </Link>
                   <button
                     onClick={() => signOut({ callbackUrl: '/' })}
@@ -117,19 +121,28 @@ export default function Header() {
             Catálogo
           </Link>
           <Link
-            href="/atividades?grade=1ano"
+            href={"/atividades?grade=1ano"}
             className="text-sm font-medium text-gray-700"
             onClick={() => setMenuOpen(false)}
           >
             Anos Iniciais
           </Link>
           <Link
-            href="/atividades?grade=6ano"
+            href={"/atividades?grade=6ano"}
             className="text-sm font-medium text-gray-700"
             onClick={() => setMenuOpen(false)}
           >
             Anos Finais
           </Link>
+          {session && (
+            <Link
+              href="/perfil"
+              className="text-sm font-medium text-gray-700"
+              onClick={() => setMenuOpen(false)}
+            >
+              Meu perfil
+            </Link>
+          )}
         </nav>
       </div>
     </header>

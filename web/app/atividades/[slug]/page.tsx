@@ -6,7 +6,6 @@ import { ShoppingCart, ChevronRight, FileText, GraduationCap, BookOpen, Share2 }
 import { createSupabaseServerClient } from '@/lib/supabase'
 import { formatPrice, GRADE_LABELS, DISCIPLINE_LABELS, type Product } from '@/lib/types'
 import AddToCartButton from '@/components/catalog/AddToCartButton'
-import ProductCard from '@/components/catalog/ProductCard'
 
 interface Props { params: { slug: string } }
 
@@ -19,30 +18,6 @@ async function getProduct(slug: string): Promise<Product | null> {
     .eq('active', true)
     .single()
   return data as Product | null
-}
-
-async function getRelatedProducts(product: Product): Promise<Product[]> {
-  const supabase = createSupabaseServerClient()
-  const { data } = await supabase
-    .from('products')
-    .select('*')
-    .eq('active', true)
-    .eq('grade_level', product.grade_level)
-    .eq('discipline', product.discipline)
-    .neq('id', product.id)
-    .limit(4)
-
-  if (data && data.length >= 2) return data as Product[]
-
-  const { data: fallback } = await supabase
-    .from('products')
-    .select('*')
-    .eq('active', true)
-    .eq('grade_level', product.grade_level)
-    .neq('id', product.id)
-    .limit(4)
-
-  return (fallback as Product[]) ?? []
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -62,8 +37,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductPage({ params }: Props) {
   const product = await getProduct(params.slug)
   if (!product) notFound()
-
-  const related = await getRelatedProducts(product)
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -89,12 +62,12 @@ export default async function ProductPage({ params }: Props) {
             />
             <div className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-2 bg-gradient-to-t from-black/60 to-transparent py-4">
               <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-gray-800">
-                Prévia da 1ª página
+                📄 Prévia da 1ª página
               </span>
             </div>
           </div>
           <p className="text-center text-xs text-gray-400">
-            Prévia ilustrativa — O PDF completo contém {product.page_count ?? '?'} páginas
+            Prévia ilustrativa · O PDF completo contém {product.page_count ?? '—'} páginas
           </p>
         </div>
 
@@ -134,7 +107,7 @@ export default async function ProductPage({ params }: Props) {
 
           {/* Trust badges */}
           <div className="mt-5 flex flex-wrap gap-3">
-            {['Pagamento seguro', 'Download imediato', 'PDF completo'].map(t => (
+            {['🔒 Pagamento seguro', '📥 Download imediato', '✅ PDF completo'].map(t => (
               <span key={t} className="text-xs text-gray-500 bg-gray-100 rounded-full px-3 py-1">{t}</span>
             ))}
           </div>
@@ -173,31 +146,6 @@ export default async function ProductPage({ params }: Props) {
           </div>
         </div>
       </div>
-
-      {/* Atividades relacionadas */}
-      {related.length > 0 && (
-        <section className="mt-16">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">Atividades relacionadas</h2>
-              <p className="mt-1 text-sm text-gray-500">
-                Mais atividades de {GRADE_LABELS[product.grade_level]} · {DISCIPLINE_LABELS[product.discipline]}
-              </p>
-            </div>
-            <Link
-              href={`/atividades?grade=${product.grade_level}&discipline=${product.discipline}`}
-              className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
-            >
-              Ver todas
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {related.map(p => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   )
 }

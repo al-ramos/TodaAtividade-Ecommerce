@@ -1,3 +1,5 @@
+import { withSentryConfig } from '@sentry/nextjs'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -7,9 +9,4 @@ const nextConfig = {
       { protocol: 'https', hostname: 'pub-*.r2.dev' },
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
       { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
-      { protocol: 'https', hostname: 'graph.facebook.com' },
-    ],
-  },
-}
-
-export default nextConfig
+      { protocol: 'https', hostname: 'graph.faceboo

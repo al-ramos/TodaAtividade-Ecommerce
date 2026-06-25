@@ -34,7 +34,9 @@
     "resend": "^6.14.0",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.4.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.14.11",

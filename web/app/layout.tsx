@@ -8,6 +8,8 @@ import { CartDrawer } from '@/components/cart/CartDrawer'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { Toaster } from 'sonner'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -57,4 +59,18 @@ export const metadata: Metadata = {
   // verification: { google: 'SEU_CODIGO_AQUI' },
 }
 
-export default async function RootLayout({ childr
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = await getServerSession(authOptions)
+
+  return (
+    <html lang="pt-BR" className={inter.variable}>
+      <body className="min-h-screen bg-gray-50 antialiased">
+        <SessionProvider session={session}>
+          <CartProvider>
+            <div className="flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+            <CartDrawer />
+            <Toaster richColor

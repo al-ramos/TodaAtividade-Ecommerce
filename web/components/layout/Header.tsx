@@ -3,10 +3,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { ShoppingCart, User, LogOut, BookOpen, Menu, X } from 'lucide-react'
+import { ShoppingCart, User, LogOut, BookOpen, Menu, X, Heart } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useCart } from '@/lib/cart-context'
+import { SearchInput } from '@/components/search/SearchInput'
 
 export default function Header() {
   const { data: session } = useSession()
@@ -23,16 +24,24 @@ export default function Header() {
           <span className="text-lg">Toda<span className="text-gray-900">Atividade</span></span>
         </Link>
 
+        {/* Search — desktop only */}
+        <div className="hidden md:flex flex-1 max-w-sm mx-6">
+          <SearchInput />
+        </div>
+
         {/* Nav desktop */}
         <nav className="hidden items-center gap-6 md:flex">
           <Link href="/atividades" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
             Catálogo
           </Link>
-          <Link href={"/atividades?grade=1ano"} className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
+          <Link href="/atividades?grade=1ano" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
             Anos Iniciais
           </Link>
-          <Link href={"/atividades?grade=6ano"} className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
+          <Link href="/atividades?grade=6ano" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
             Anos Finais
+          </Link>
+          <Link href="/bundles" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
+            Kits
           </Link>
         </nav>
 
@@ -79,7 +88,10 @@ export default function Header() {
                   <Link href="/perfil" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                     <User className="h-4 w-4" /> Meu perfil
                   </Link>
-                  <Link href="/pedidos" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                  <Link href="/minha-conta/favoritos" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                    <Heart className="h-4 w-4" /> Favoritos
+                  </Link>
+                  <Link href="/minha-conta/pedidos" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                     <ShoppingCart className="h-4 w-4" /> Minhas compras
                   </Link>
                   <button
@@ -113,35 +125,30 @@ export default function Header() {
       {/* Mobile nav */}
       <div className={cn('md:hidden border-t border-gray-100 bg-white px-4 pb-4', menuOpen ? 'block' : 'hidden')}>
         <nav className="flex flex-col gap-3 pt-3">
-          <Link
-            href="/atividades"
-            className="text-sm font-medium text-gray-700"
-            onClick={() => setMenuOpen(false)}
-          >
+          <Link href="/atividades" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>
             Catálogo
           </Link>
-          <Link
-            href={"/atividades?grade=1ano"}
-            className="text-sm font-medium text-gray-700"
-            onClick={() => setMenuOpen(false)}
-          >
+          <Link href="/atividades?grade=1ano" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>
             Anos Iniciais
           </Link>
-          <Link
-            href={"/atividades?grade=6ano"}
-            className="text-sm font-medium text-gray-700"
-            onClick={() => setMenuOpen(false)}
-          >
+          <Link href="/atividades?grade=6ano" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>
             Anos Finais
           </Link>
+          <Link href="/bundles" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>
+            Kits
+          </Link>
           {session && (
-            <Link
-              href="/perfil"
-              className="text-sm font-medium text-gray-700"
-              onClick={() => setMenuOpen(false)}
-            >
-              Meu perfil
-            </Link>
+            <>
+              <Link href="/perfil" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>
+                Meu perfil
+              </Link>
+              <Link href="/minha-conta/favoritos" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>
+                Favoritos
+              </Link>
+              <Link href="/minha-conta/pedidos" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>
+                Minhas compras
+              </Link>
+            </>
           )}
         </nav>
       </div>

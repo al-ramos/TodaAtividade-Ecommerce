@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { BookOpen, Mail, Loader2, CheckCircle } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase-browser'
 import { toast } from 'sonner'
 import type { Metadata } from 'next'
 

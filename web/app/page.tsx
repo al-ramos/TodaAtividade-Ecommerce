@@ -3,6 +3,7 @@ import { ArrowRight, BookOpen, Shield, Download, Star } from 'lucide-react'
 import { createSupabaseServerClient } from '@/lib/supabase'
 import ProductCard from '@/components/catalog/ProductCard'
 import type { Product } from '@/lib/types'
+import { OrganizationJsonLd } from '@/components/seo/OrganizationJsonLd'
 
 async function getFeaturedProducts(): Promise<Product[]> {
   const supabase = createSupabaseServerClient()
@@ -20,6 +21,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <OrganizationJsonLd />
       {/* Hero */}
       <section className="bg-gradient-to-br from-blue-600 to-blue-800 py-20 text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -99,12 +101,4 @@ export default async function HomePage() {
             <div className="rounded-xl border border-dashed border-gray-300 py-16 text-center">
               <BookOpen className="mx-auto h-10 w-10 text-gray-300" />
               <p className="mt-3 text-sm text-gray-500">
-                Em breve, atividades incríveis aqui!
-              </p>
-            </div>
-          )}
-        </div>
-      </section>
-    </>
-  )
-}
+                Em breve, atividades incríveis a

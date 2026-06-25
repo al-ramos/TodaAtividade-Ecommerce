@@ -2,11 +2,20 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ShoppingCart, ChevronRight, FileText, GraduationCap, BookOpen, Share2 } from 'lucide-react'
-import { createSupabaseServerClient } from '@/lib/supabase'
+import { FileText, GraduationCap, BookOpen } from 'lucide-react'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { createSupabaseServerClient, supabaseAdmin } from '@/lib/supabase'
 import { formatPrice, GRADE_LABELS, DISCIPLINE_LABELS, type Product } from '@/lib/types'
 import AddToCartButton from '@/components/catalog/AddToCartButton'
 import ProductCard from '@/components/catalog/ProductCard'
+import ShareButtons from '@/components/catalog/ShareButtons'
+import FavoritoButton from '@/components/catalog/FavoritoButton'
+import PDFPreviewButton from '@/components/catalog/PDFPreviewButton'
+import ReviewsSection, { type ReviewsSectionData } from '@/components/reviews/ReviewsSection'
+import { ProductJsonLd } from '@/components/seo/ProductJsonLd'
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
+import { Breadcrumb } from '@/components/ui/Breadcrumb'
 
 interface Props { params: { slug: string } }
 
@@ -45,36 +54,144 @@ async function getRelatedProducts(product: Product): Promise<Product[]> {
   return (fallback as Product[]) ?? []
 }
 
+const BASE_URL = 'https://www.todaatividade.com.br'
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = await getProduct(params.slug)
   if (!product) return { title: 'Atividade não encontrada' }
+
+  const description = product.description.slice(0, 160)
+  const url = `${BASE_URL}/atividades/${params.slug}`
+
   return {
-    title: product.title,
-    description: product.description,
+    title: product.title, // renderizado como "{título} | TodaAtividade" via template
+    description,
+    alternates: { canonical: url },
     openGraph: {
-      title: product.title,
-      description: product.description,
-      images: [{ url: product.thumbnail_url, width: 800, height: 1100 }],
+      title: `${product.title} | TodaAtividade`,
+      description,
+      url,
+      type: 'website',
+      siteName: 'TodaAtividade',
+      locale: 'pt_BR',
+      images: [
+        {
+          url: product.thumbnail_url,
+          width: 800,
+          height: 1100,
+          alt: product.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${product.title} | TodaAtividade`,
+      description,
+      images: [product.thumbnail_url],
     },
   }
+}
+
+async function getIsFavorite(userId: string, productId: string): Promise<boolean> {
+  const { data } = await supabaseAdmin
+    .from('favorites')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('product_id', productId)
+    .maybeSingle()
+  return !!data
+}
+
+async function getReviewsData(
+  productId: string,
+  userId?: string,
+): Promise<ReviewsSectionData> {
+  const { data: reviews } = await supabaseAdmin
+    .from('reviews')
+    .select('id, user_id, rating, comment, created_at, updated_at')
+    .eq('product_id', productId)
+    .order('created_at', { ascending: false })
+
+  const list = reviews ?? []
+  const totalCount = list.length
+  const averageRating =
+    totalCount > 0 ? list.reduce((s, r) => s + r.rating, 0) / totalCount : 0
+  const distribution: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+  list.forEach((r) => { distribution[r.rating] = (distribution[r.rating] ?? 0) + 1 })
+
+  const enriched = await Promise.all(
+    list.map(async (r) => {
+      const { data: u } = await supabaseAdmin.auth.admin.getUserById(r.user_id)
+      const fullName: string = u?.user?.user_metadata?.full_name ?? u?.user?.email ?? ''
+      const parts = fullName.trim().split(' ').filter(Boolean)
+      const maskedName =
+        parts.length >= 2
+          ? `${parts[0][0]}. ${parts[parts.length - 1][0]}.`
+          : parts[0]?.[0] ? `${parts[0][0]}.` : 'Anônimo'
+      return { ...r, maskedName }
+    }),
+  )
+
+  const userReview = userId ? enriched.find((r) => r.user_id === userId) ?? null : null
+  return {
+    reviews: enriched,
+    averageRating: Math.round(averageRating * 10) / 10,
+    totalCount,
+    distribution,
+    userReview,
+  }
+}
+
+async function getHasPurchased(userId: string, productId: string): Promise<boolean> {
+  const { data } = await supabaseAdmin
+    .from('order_items')
+    .select('order_id, orders!inner(status)')
+    .eq('product_id', productId)
+    .eq('orders.user_id', userId)
+    .eq('orders.status', 'paid')
+    .limit(1)
+    .maybeSingle()
+  return !!data
 }
 
 export default async function ProductPage({ params }: Props) {
   const product = await getProduct(params.slug)
   if (!product) notFound()
 
-  const related = await getRelatedProducts(product)
+  const [related, session] = await Promise.all([
+    getRelatedProducts(product),
+    getServerSession(authOptions),
+  ])
+
+  const userId = session?.user?.id
+
+  const [isFavorite, reviewsData, hasPurchased] = await Promise.all([
+    userId ? getIsFavorite(userId, product.id) : Promise.resolve(false),
+    getReviewsData(product.id, userId),
+    userId ? getHasPurchased(userId, product.id) : Promise.resolve(false),
+  ])
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      {/* Breadcrumb */}
-      <nav className="mb-6 flex items-center gap-1.5 text-sm text-gray-500">
-        <Link href="/" className="hover:text-blue-600">Início</Link>
-        <ChevronRight className="h-4 w-4" />
-        <Link href="/atividades" className="hover:text-blue-600">Catálogo</Link>
-        <ChevronRight className="h-4 w-4" />
-        <span className="text-gray-900 font-medium truncate max-w-xs">{product.title}</span>
-      </nav>
+    <>
+      <ProductJsonLd
+        name={product.title}
+        description={product.description}
+        image={product.thumbnail_url}
+        price={product.price}
+        slug={product.slug}
+        rating={reviewsData.totalCount > 0 ? { value: reviewsData.averageRating, count: reviewsData.totalCount } : undefined}
+      />
+      <BreadcrumbJsonLd items={[
+        { name: 'TodaAtividade', url: `${BASE_URL}` },
+        { name: 'Atividades', url: `${BASE_URL}/atividades` },
+        { name: product.title, url: `${BASE_URL}/atividades/${product.slug}` },
+      ]} />
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <Breadcrumb items={[
+        { label: 'Início', href: '/' },
+        { label: 'Atividades', href: '/atividades' },
+        { label: product.title },
+      ]} />
 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
         {/* Prévia do PDF */}
@@ -121,8 +238,15 @@ export default async function ProductPage({ params }: Props) {
             <span className="text-sm text-gray-500">no Pix ou cartão</span>
           </div>
 
+          {/* Prévia PDF */}
+          {product.pdf_key && (
+            <div className="mt-4">
+              <PDFPreviewButton productId={product.id} productTitle={product.title} />
+            </div>
+          )}
+
           {/* CTA */}
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
             <AddToCartButton product={product} />
             <Link
               href="/checkout"
@@ -130,6 +254,11 @@ export default async function ProductPage({ params }: Props) {
             >
               Comprar agora
             </Link>
+            <FavoritoButton
+              productId={product.id}
+              initialIsFavorite={isFavorite}
+              size="md"
+            />
           </div>
 
           {/* Trust badges */}
@@ -167,11 +296,19 @@ export default async function ProductPage({ params }: Props) {
 
           {/* Compartilhar */}
           <div className="mt-6">
-            <button className="flex items-center gap-2 text-sm text-gray-400 hover:text-blue-600 transition-colors">
-              <Share2 className="h-4 w-4" /> Compartilhar esta atividade
-            </button>
+            <ShareButtons slug={product.slug} titulo={product.title} />
           </div>
         </div>
+      </div>
+
+      {/* Avaliações */}
+      <div className="mt-16">
+        <ReviewsSection
+          productId={product.id}
+          initialData={reviewsData}
+          currentUserId={userId}
+          hasPurchased={hasPurchased}
+        />
       </div>
 
       {/* Atividades relacionadas */}
@@ -198,6 +335,7 @@ export default async function ProductPage({ params }: Props) {
           </div>
         </section>
       )}
-    </div>
+      </div>
+    </>
   )
 }

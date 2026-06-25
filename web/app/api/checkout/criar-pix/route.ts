@@ -24,6 +24,8 @@ const bodySchema = z.object({
       }),
     )
     .min(1, 'Ao menos um item é obrigatório'),
+  couponId: z.string().uuid().optional(),
+  discountAmount: z.number().int().min(0).optional(), // centavos
 })
 
 // ─── POST /api/checkout/criar-pix ─────────────────────────────────────────────
@@ -45,9 +47,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 })
   }
 
-  const { items } = parsed.data
+  const { items, couponId, discountAmount = 0 } = parsed.data
   const totalCents = items.reduce((s, i) => s + i.price * i.quantity, 0)
-  const totalBRL = totalCents / 100
+  const discountBRL = discountAmount / 100
+  const totalBRL = Math.max(0, totalCents / 100 - discountBRL)
 
   // 1. Criar pedido no Supabase
   const { data: order, error: orderError } = await supabaseAdmin
@@ -57,6 +60,8 @@ export async function POST(req: NextRequest) {
       status: 'pending',
       payment_method: 'pix',
       total: totalCents,
+      coupon_id: couponId ?? null,
+      discount_amount: discountBRL,
     })
     .select()
     .single()

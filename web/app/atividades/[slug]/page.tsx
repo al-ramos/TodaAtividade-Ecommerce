@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ShoppingCart, ChevronRight, FileText, GraduationCap, BookOpen } from 'lucide-react'
+import { FileText, GraduationCap, BookOpen } from 'lucide-react'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { createSupabaseServerClient, supabaseAdmin } from '@/lib/supabase'
@@ -13,6 +13,9 @@ import ShareButtons from '@/components/catalog/ShareButtons'
 import FavoritoButton from '@/components/catalog/FavoritoButton'
 import PDFPreviewButton from '@/components/catalog/PDFPreviewButton'
 import ReviewsSection, { type ReviewsSectionData } from '@/components/reviews/ReviewsSection'
+import { ProductJsonLd } from '@/components/seo/ProductJsonLd'
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
+import { Breadcrumb } from '@/components/ui/Breadcrumb'
 
 interface Props { params: { slug: string } }
 
@@ -168,58 +171,27 @@ export default async function ProductPage({ params }: Props) {
     userId ? getHasPurchased(userId, product.id) : Promise.resolve(false),
   ])
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: product.title,
-    description: product.description,
-    image: product.thumbnail_url,
-    url: `${BASE_URL}/atividades/${product.slug}`,
-    offers: {
-      '@type': 'Offer',
-      price: (product.price / 100).toFixed(2),
-      priceCurrency: 'BRL',
-      availability: 'https://schema.org/InStock',
-      url: `${BASE_URL}/atividades/${product.slug}`,
-    },
-    ...(reviewsData.totalCount > 0 && {
-      aggregateRating: {
-        '@type': 'AggregateRating',
-        ratingValue: reviewsData.averageRating.toFixed(1),
-        reviewCount: reviewsData.totalCount,
-        bestRating: '5',
-        worstRating: '1',
-      },
-      review: reviewsData.reviews.slice(0, 3).map((r) => ({
-        '@type': 'Review',
-        author: { '@type': 'Person', name: r.maskedName },
-        reviewRating: {
-          '@type': 'Rating',
-          ratingValue: String(r.rating),
-          bestRating: '5',
-          worstRating: '1',
-        },
-        datePublished: r.created_at.slice(0, 10),
-        ...(r.comment ? { reviewBody: r.comment } : {}),
-      })),
-    }),
-  }
-
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      <ProductJsonLd
+        name={product.title}
+        description={product.description}
+        image={product.thumbnail_url}
+        price={product.price}
+        slug={product.slug}
+        rating={reviewsData.totalCount > 0 ? { value: reviewsData.averageRating, count: reviewsData.totalCount } : undefined}
       />
+      <BreadcrumbJsonLd items={[
+        { name: 'TodaAtividade', url: `${BASE_URL}` },
+        { name: 'Atividades', url: `${BASE_URL}/atividades` },
+        { name: product.title, url: `${BASE_URL}/atividades/${product.slug}` },
+      ]} />
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      {/* Breadcrumb */}
-      <nav className="mb-6 flex items-center gap-1.5 text-sm text-gray-500">
-        <Link href="/" className="hover:text-blue-600">Início</Link>
-        <ChevronRight className="h-4 w-4" />
-        <Link href="/atividades" className="hover:text-blue-600">Catálogo</Link>
-        <ChevronRight className="h-4 w-4" />
-        <span className="text-gray-900 font-medium truncate max-w-xs">{product.title}</span>
-      </nav>
+      <Breadcrumb items={[
+        { label: 'Início', href: '/' },
+        { label: 'Atividades', href: '/atividades' },
+        { label: product.title },
+      ]} />
 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
         {/* Prévia do PDF */}

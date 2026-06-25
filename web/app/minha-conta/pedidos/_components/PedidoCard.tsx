@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { ChevronDown, ChevronUp, Download, ShoppingBag } from 'lucide-react'
+import { ChevronDown, ChevronUp, Download, FileDown, ShoppingBag } from 'lucide-react'
 import { StatusBadge } from './StatusBadge'
 import { ReenviarEmailButton } from './ReenviarEmailButton'
 
@@ -151,12 +151,8 @@ export function PedidoCard({ order }: PedidoCardProps) {
 
           {/* Footer com ações do pedido */}
           {isPaid && (
-            <div className="flex items-center justify-end border-t border-gray-100 px-5 py-3">
-              <ReenviarEmailButton orderId={order.id} />
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  )
-}
+            <div className="flex items-center justify-between border-t border-gray-100 px-5 py-3">
+              <a
+                href={`/api/orders/${order.id}/receipt`}
+                download
+                c

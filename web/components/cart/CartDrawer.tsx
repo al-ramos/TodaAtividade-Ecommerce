@@ -5,10 +5,13 @@ import { formatPrice } from '@/lib/types'
 import { X, ShoppingCart, Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { CouponInput, type AppliedCoupon } from '@/components/checkout/CouponInput'
 
 export function CartDrawer() {
   const { items, count, total, removeItem, closeCart, isOpen } = useCart()
+  const [coupon, setCoupon] = useState<AppliedCoupon | null>(null)
+  const totalComDesconto = coupon ? Math.max(0, total - coupon.discount) : total
 
   // Fechar com ESC
   useEffect(() => {
@@ -98,9 +101,20 @@ export function CartDrawer() {
         {/* Footer */}
         {items.length > 0 && (
           <div className="p-4 border-t space-y-3 bg-white">
+            <CouponInput orderTotal={total} onApply={setCoupon} />
             <div className="flex justify-between text-sm text-gray-600">
               <span>{count} {count === 1 ? 'item' : 'itens'}</span>
-              <span className="font-bold text-gray-900 text-base">{formatPrice(total)}</span>
+              <span>{formatPrice(total)}</span>
+            </div>
+            {coupon && (
+              <div className="flex justify-between text-sm text-green-700">
+                <span>Desconto ({coupon.code})</span>
+                <span>−{formatPrice(coupon.discount)}</span>
+              </div>
+            )}
+            <div className="flex justify-between text-sm font-bold text-gray-900">
+              <span>Total</span>
+              <span className="text-base">{formatPrice(totalComDesconto)}</span>
             </div>
             <Link
               href="/checkout"

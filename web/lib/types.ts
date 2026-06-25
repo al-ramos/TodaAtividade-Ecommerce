@@ -16,6 +16,7 @@ export interface Product {
   price: number              // em centavos (ex: 990 = R$ 9,90)
   thumbnail_url: string      // URL pública da prévia (1ª página)
   preview_url: string        // URL pública da 1ª página com watermark
+  pdf_key?: string | null    // chave R2 do PDF original (null = sem PDF)
   grade_level: GradeLevel
   discipline: Discipline
   page_count?: number
@@ -82,6 +83,29 @@ export interface CatalogFilters {
   search?: string
   minPrice?: number
   maxPrice?: number
+}
+
+// ─── Bundle / Kit ────────────────────────────────────────────────────────────
+export interface Bundle {
+  id: string
+  slug: string
+  title: string
+  description: string | null
+  thumbnail_url: string | null
+  price: number           // em reais (numeric 10,2)
+  original_price: number  // em reais (numeric 10,2)
+  active: boolean
+  created_at: string
+}
+
+export interface BundleItem {
+  id: string
+  bundle_id: string
+  product_id: string
+}
+
+export interface BundleWithProducts extends Bundle {
+  products: Product[]
 }
 
 // ─── Helpers de formatação ────────────────────────────────────────────────────

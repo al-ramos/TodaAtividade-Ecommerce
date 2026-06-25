@@ -1,21 +1,36 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { ShoppingCart, Eye } from 'lucide-react'
+import { ShoppingCart, Eye, Star } from 'lucide-react'
 import { type Product, formatPrice, GRADE_LABELS, DISCIPLINE_LABELS } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import FavoritoButton from '@/components/catalog/FavoritoButton'
 
 interface ProductCardProps {
   product: Product
   className?: string
+  isFavorite?: boolean
+  averageRating?: number
+  reviewCount?: number
 }
 
-export default function ProductCard({ product, className }: ProductCardProps) {
+export default function ProductCard({
+  product,
+  className,
+  isFavorite = false,
+  averageRating,
+  reviewCount,
+}: ProductCardProps) {
   return (
     <div className={cn(
       'group relative flex flex-col rounded-xl border border-gray-200 bg-white',
       'overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200',
       className
     )}>
+      {/* Botão favorito — canto superior direito */}
+      <div className="absolute right-2 top-2 z-10">
+        <FavoritoButton productId={product.id} initialIsFavorite={isFavorite} size="sm" />
+      </div>
+
       {/* Thumbnail */}
       <Link href={`/atividades/${product.slug}`} className="relative block aspect-[3/4] overflow-hidden bg-gray-100">
         <Image
@@ -53,10 +68,32 @@ export default function ProductCard({ product, className }: ProductCardProps) {
           </h3>
         </Link>
 
+        {/* Link de prévia */}
+        {product.pdf_key && (
+          <a
+            href={`/api/preview/${product.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+          >
+            <Eye className="h-3 w-3" />
+            Ver prévia
+          </a>
+        )}
+
         {/* Descrição curta */}
         <p className="mt-1 line-clamp-2 text-xs text-gray-500 flex-1">
           {product.description}
         </p>
+
+        {/* Rating */}
+        {typeof averageRating === 'number' && reviewCount !== undefined && reviewCount > 0 && (
+          <div className="mt-1.5 flex items-center gap-1 text-xs text-gray-500">
+            <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+            <span className="font-medium text-gray-700">{averageRating.toFixed(1)}</span>
+            <span>({reviewCount})</span>
+          </div>
+        )}
 
         {/* Preço + CTA */}
         <div className="mt-3 flex items-center justify-between">

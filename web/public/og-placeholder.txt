@@ -1,0 +1,6 @@
+AÇÃO NECESSÁRIA — DESIGNER
+Criar arquivo: public/og-default.jpg
+Especificação: 1200 × 630 px, JPG, máx. 300 KB
+Conteúdo: logo TodaAtividade + tagline "Atividades escolares para imprimir"
+Uso: og:image padrão (home, catálogo e páginas sem thumbnail próprio)
+Após criar a imagem, remover este arquivo.

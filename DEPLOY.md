@@ -196,3 +196,79 @@ vercel rollback [deployment-url]
 - Vercel Docs: [vercel.com/docs](https://vercel.com/docs)
 - Next.js monorepo: [vercel.com/docs/monorepos](https://vercel.com/docs/monorepos)
 - Domínios: [vercel.com/docs/domains](https://vercel.com/docs/domains)
+
+---
+
+## 7. Checklist Go-Live (US-40)
+
+Execute este checklist **antes de apontar o DNS definitivo** para a Vercel.
+
+### 7.1 Infraestrutura
+
+- [ ] Branch `develop` com push feito para GitHub
+- [ ] Vercel conectada ao repositório, deploy de produção com status **Ready**
+- [ ] Variáveis de ambiente configuradas no Vercel (todas as do `.env.example`)
+- [ ] `NEXTAUTH_URL` apontando para `https://www.todaatividade.com.br`
+- [ ] `NEXT_PUBLIC_APP_URL` apontando para `https://www.todaatividade.com.br`
+- [ ] DNS do `todaatividade.com.br` → CNAME para `cname.vercel-dns.com`
+- [ ] SSL/HTTPS ativo e certificado emitido pela Vercel (automático após DNS)
+- [ ] `www.todaatividade.com.br` redireciona corretamente para o app
+
+### 7.2 Google OAuth
+
+- [ ] Console Google Cloud → Credenciais → URI de redirect autorizado inclui `https://www.todaatividade.com.br/api/auth/callback/google`
+- [ ] `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` configurados na Vercel
+- [ ] Login com Google funciona em produção (sem erros de redirect_uri_mismatch)
+
+### 7.3 Mercado Pago
+
+- [ ] `MERCADOPAGO_ACCESS_TOKEN` é o token de **produção** (não sandbox)
+- [ ] Webhook configurado no MP Dashboard: `https://www.todaatividade.com.br/api/webhooks/mercadopago`
+- [ ] `MERCADOPAGO_WEBHOOK_SECRET` correto no Vercel
+- [ ] Compra de teste com cartão real aprovada e webhook recebido
+- [ ] E-mail de confirmação chegou após webhook
+
+### 7.4 Fluxos E2E (testar em produção antes do go-live público)
+
+- [ ] **Cadastro:** novo usuário via e-mail/senha
+- [ ] **Login Google:** OAuth completo sem erros
+- [ ] **Catálogo:** grid de atividades carrega, filtros e busca funcionam
+- [ ] **Produto:** página de detalhe com avaliações e botão favoritar
+- [ ] **Checkout Pix:** QR Code gerado, webhook recebido, e-mail enviado, download liberado
+- [ ] **Checkout Cartão:** pagamento aprovado, download liberado
+- [ ] **Download:** PDF chega com watermark do e-mail do comprador
+- [ ] **Histórico:** `/minha-conta/pedidos` exibe pedido com status correto
+- [ ] **Favoritos:** toggle funciona e persiste entre sessões
+- [ ] **Admin:** cadastro de atividade, upload de PDF, visualização de pedidos
+- [ ] **Reenvio de e-mail:** botão em `/minha-conta/pedidos` funciona
+
+### 7.5 Performance
+
+- [ ] Vercel Speed Insights: LCP < 2.5s na home (verificar após 1º deploy)
+- [ ] Core Web Vitals no Google Search Console (disponível ~48h após indexação)
+- [ ] Imagens com atributo `alt` e tamanhos definidos (sem CLS)
+
+### 7.6 Monitoramento
+
+- [ ] Sentry DSN configurado (`NEXT_PUBLIC_SENTRY_DSN` e `SENTRY_DSN`)
+- [ ] Testar: acessar `/api/test-sentry` e confirmar erro no Sentry dashboard
+- [ ] Vercel Analytics habilitado no painel do projeto (aba Analytics)
+- [ ] Meta Pixel ID configurado (`NEXT_PUBLIC_META_PIXEL_ID`)
+- [ ] Verificar Pixel Helper no Chrome: PageView disparando na home
+
+### 7.7 SEO e Legal
+
+- [ ] `sitemap.xml` acessível em `https://www.todaatividade.com.br/sitemap.xml`
+- [ ] `robots.txt` acessível em `https://www.todaatividade.com.br/robots.txt`
+- [ ] Google Search Console: domínio verificado e sitemap enviado
+- [ ] Páginas `/privacidade` e `/termos` acessíveis e com conteúdo correto
+- [ ] Footer com links para Privacidade e Termos
+
+### 7.8 Pós-go-live
+
+- [ ] Remover ou proteger a rota `/api/test-sentry` com auth admin
+- [ ] Monitorar Sentry por 24h após go-live
+- [ ] Testar fluxo completo em mobile (iOS Safari + Android Chrome)
+- [ ] Registrar data de go-live no Notion (Métricas por Sprint)
+
+---

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
-import { LayoutDashboard, BookOpen, ShoppingBag, Upload, LogOut, Tag, Package } from 'lucide-react'
+import { LayoutDashboard, BookOpen, ShoppingBag, Upload, LogOut, Tag, Package, Star } from 'lucide-react'
 import { authOptions } from '@/lib/auth'
 
 const navItems = [
@@ -10,6 +10,7 @@ const navItems = [
   { href: '/admin/pedidos', label: 'Pedidos', icon: ShoppingBag },
   { href: '/admin/cupons', label: 'Cupons', icon: Tag },
   { href: '/admin/bundles', label: 'Bundles', icon: Package },
+  { href: '/admin/avaliacoes', label: 'Avaliações', icon: Star },
 ]
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -88,8 +89,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   )
 }
 
-// ─── Nav link com active state (server-side via searchParams workaround) ──────
-// Usamos um componente separado para evitar "use client" no layout
 function AdminNavLink({
   href,
   label,

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { PDFDocument, rgb, degrees } from 'pdf-lib'
 import { authOptions } from '@/lib/auth'
 import { supabaseAdmin } from '@/lib/supabase'
 
@@ -16,7 +17,67 @@ const r2 = new S3Client({
 })
 
 const BUCKET = process.env.CLOUDFLARE_R2_BUCKET_NAME ?? 'todaatividade-pdfs'
-const DOWNLOAD_URL_TTL = 900 // 15 minutos
+const DOWNLOAD_URL_TTL = 900 // 15 minutos (fallback)
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+/** Lê o body de um GetObjectCommand como Uint8Array */
+async function fetchPdfBytes(key: string): Promise<Uint8Array> {
+  const cmd = new GetObjectCommand({ Bucket: BUCKET, Key: key })
+  const { Body } = await r2.send(cmd)
+  if (!Body) throw new Error('R2 Body vazio')
+
+  // Body é um ReadableStream no edge / Readable no Node
+  const chunks: Uint8Array[] = []
+  for await (const chunk of Body as AsyncIterable<Uint8Array>) {
+    chunks.push(chunk)
+  }
+  const total = chunks.reduce((sum, c) => sum + c.length, 0)
+  const result = new Uint8Array(total)
+  let offset = 0
+  for (const chunk of chunks) {
+    result.set(chunk, offset)
+    offset += chunk.length
+  }
+  return result
+}
+
+/** Aplica watermark diagonal com o e-mail do comprador em todas as páginas */
+async function applyWatermark(pdfBytes: Uint8Array, email: string): Promise<Uint8Array> {
+  const doc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true })
+  const pages = doc.getPages()
+
+  for (const page of pages) {
+    const { width, height } = page.getSize()
+    const fontSize = Math.max(10, Math.min(width * 0.04, 16))
+    const text = email
+
+    // Centro da página
+    const x = width / 2
+    const y = height / 2
+
+    // Linha 1 — diagonal central
+    page.drawText(text, {
+      x: x - (text.length * fontSize * 0.3),
+      y: y,
+      size: fontSize,
+      color: rgb(0.55, 0.55, 0.55),
+      opacity: 0.18,
+      rotate: degrees(35),
+    })
+
+    // Linha 2 — canto inferior
+    page.drawText(text, {
+      x: 20,
+      y: 20,
+      size: Math.max(7, fontSize * 0.7),
+      color: rgb(0.55, 0.55, 0.55),
+      opacity: 0.22,
+    })
+  }
+
+  return doc.save()
+}
 
 // ─── GET /api/download/[orderId]/[productId] ──────────────────────────────────
 export async function GET(
@@ -30,6 +91,7 @@ export async function GET(
   }
 
   const { orderId, productId } = params
+  const buyerEmail = session.user.email ?? session.user.id
 
   // 2. Valida que o pedido pertence ao usuário autenticado
   const { data: order, error: orderError } = await supabaseAdmin
@@ -73,30 +135,45 @@ export async function GET(
   // Sanitiza o título para usar no nome do arquivo do download
   const filename = (product?.title ?? 'atividade')
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-zA-Z0-9\s-]/g, '')
     .trim()
     .replace(/\s+/g, '_')
     .toLowerCase()
 
-  // 5. Gera signed URL com TTL de 15 minutos
-  let signedUrl: string
+  // 5. Tenta buscar o PDF e aplicar watermark em memória
   try {
-    signedUrl = await getSignedUrl(
-      r2,
-      new GetObjectCommand({
-        Bucket: BUCKET,
-        Key: pdfKey,
-        ResponseContentType: 'application/pdf',
-        ResponseContentDisposition: `attachment; filename="${filename}.pdf"`,
-      }),
-      { expiresIn: DOWNLOAD_URL_TTL },
-    )
-  } catch (err) {
-    console.error('[download] Erro ao gerar signed URL para %s:', pdfKey, err)
-    return NextResponse.json({ error: 'Erro ao gerar link de download' }, { status: 500 })
-  }
+    const rawBytes = await fetchPdfBytes(pdfKey)
+    const watermarkedBytes = await applyWatermark(rawBytes, buyerEmail)
 
-  // 6. Redirect 302 → signed URL (a URL nunca é exposta na página do cliente)
-  return NextResponse.redirect(signedUrl)
+    return new NextResponse(Buffer.from(watermarkedBytes), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="${filename}.pdf"`,
+        'Content-Length': String(watermarkedBytes.length),
+        'Cache-Control': 'no-store',
+      },
+    })
+  } catch (err) {
+    // 6. Fallback: se pdf-lib falhar, serve via signed URL (sem watermark)
+    console.error('[download] Watermark falhou para %s, usando fallback:', pdfKey, err)
+
+    try {
+      const signedUrl = await getSignedUrl(
+        r2,
+        new GetObjectCommand({
+          Bucket: BUCKET,
+          Key: pdfKey,
+          ResponseContentType: 'application/pdf',
+          ResponseContentDisposition: `attachment; filename="${filename}.pdf"`,
+        }),
+        { expiresIn: DOWNLOAD_URL_TTL },
+      )
+      return NextResponse.redirect(signedUrl)
+    } catch (fallbackErr) {
+      console.error('[download] Fallback signed URL também falhou:', fallbackErr)
+      return NextResponse.json({ error: 'Erro ao gerar link de download' }, { status: 500 })
+    }
+  }
 }

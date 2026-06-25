@@ -1,86 +1,73 @@
 import { Suspense } from 'react'
 import { Metadata } from 'next'
-import Link from 'next/link'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { createSupabaseServerClient, supabaseAdmin } from '@/lib/supabase'
+import { createSupabaseServerClient } from '@/lib/supabase'
 import ProductCard from '@/components/catalog/ProductCard'
-import FiltrosCatalogo from '@/components/catalog/FiltrosCatalogo'
-import ResultadosBusca from '@/components/catalog/ResultadosBusca'
-import type { Product } from '@/lib/types'
+import Filters from '@/components/catalog/Filters'
+import type { Product, GradeLevel, Discipline } from '@/lib/types'
+import { SlidersHorizontal } from 'lucide-react'
 
-interface ReviewSummary {
-  product_id: string
-  average_rating: number
-  review_count: number
+export const metadata: Metadata = { title: 'Catálogo de Atividades' }
+
+interface PageProps {
+  searchParams: { grade?: string; discipline?: string; search?: string }
 }
 
-async function getReviewSummaries(productIds: string[]): Promise<Map<string, ReviewSummary>> {
-  if (productIds.length === 0) return new Map()
+async function getProducts(filters: PageProps['searchParams']): Promise<Product[]> {
+  const supabase = createSupabaseServerClient()
+  let query = supabase.from('products').select('*').eq('active', true)
 
-  const { data } = await supabaseAdmin
-    .from('reviews')
-    .select('product_id, rating')
-    .in('product_id', productIds)
+  if (filters.grade)      query = query.eq('grade_level', filters.grade)
+  if (filters.discipline) query = query.eq('discipline', filters.discipline)
+  if (filters.search)     query = query.ilike('title', `%${filters.search}%`)
 
-  const map = new Map<string, ReviewSummary>()
-  if (!data) return map
-
-  const grouped: Record<string, number[]> = {}
-  data.forEach((r: { product_id: string; rating: number }) => {
-    if (!grouped[r.product_id]) grouped[r.product_id] = []
-    grouped[r.product_id].push(r.rating)
-  })
-
-  Object.entries(grouped).forEach(([pid, ratings]) => {
-    const avg = ratings.reduce((s, v) => s + v, 0) / ratings.length
-    map.set(pid, {
-      product_id: pid,
-      average_rating: Math.round(avg * 10) / 10,
-      review_count: ratings.length,
-    })
-  })
-
-  return map
+  const { data } = await query.order('created_at', { ascending: false })
+  return (data as Product[]) ?? []
 }
 
-export const metadata: Metadata = {
-  title: 'Catálogo de Atividades',
-  description:
-    'Explore centenas de atividades pedagógicas em PDF para ensino fundamental. Filtre por série (1º ao 9º ano), disciplina e muito mais.',
-  alternates: { canonical: 'https://www.todaatividade.com.br/atividades' },
-  openGraph: {
-    title: 'Catálogo de Atividades | TodaAtividade',
-    description:
-      'Explore centenas de atividades pedagógicas em PDF para ensino fundamental. Filtre por série (1º ao 9º ano), disciplina e muito mais.',
-    url: 'https://www.todaatividade.com.br/atividades',
-    type: 'website',
-    siteName: 'TodaAtividade',
-    locale: 'pt_BR',
-  },
+export default async function CatalogPage({ searchParams }: PageProps) {
+  const products = await getProducts(searchParams)
+  const hasFilters = searchParams.grade || searchParams.discipline || searchParams.search
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Catálogo de Atividades</h1>
+        <p className="mt-1 text-sm text-gray-500">
+          {products.length} {products.length === 1 ? 'atividade encontrada' : 'atividades encontradas'}
+          {hasFilters && ' com os filtros aplicados'}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+        {/* Sidebar de filtros */}
+        <aside className="lg:col-span-1">
+          <div className="sticky top-20 rounded-xl border border-gray-200 bg-white p-5">
+            <div className="mb-4 flex items-center gap-2">
+              <SlidersHorizontal className="h-4 w-4 text-gray-600" />
+              <h2 className="text-sm font-semibold text-gray-900">Filtros</h2>
+            </div>
+            <Suspense fallback={null}>
+              <Filters />
+            </Suspense>
+          </div>
+        </aside>
+
+        {/* Grid de produtos */}
+        <div className="lg:col-span-3">
+          {products.length > 0 ? (
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              {products.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 py-20">
+              <p className="text-sm text-gray-500">Nenhuma atividade encontrada.</p>
+              <a href="/atividades" className="mt-2 text-sm text-blue-600 hover:underline">Limpar filtros</a>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
 }
-
-const PAGE_SIZE = 12
-
-// ─── Tipos ───────────────────────────────────────────────────────────────────
-
-interface SearchParams {
-  /** Busca por texto (título OU descrição) */
-  q?: string
-  /** Compatibilidade com param antigo */
-  search?: string
-  grade?: string
-  discipline?: string
-  /** Faixas: 'free' | '20' | '50' | '50plus' */
-  preco?: string
-  /** 'recente' (default) | 'menor_preco' | 'maior_preco' | 'az' */
-  ordem?: string
-  page?: string
-}
-
-// ─── Busca no Supabase ────────────────────────────────────────────────────────
-
-async function getProducts(
-  sp: SearchParams,
-): Promis

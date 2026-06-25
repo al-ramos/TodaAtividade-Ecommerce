@@ -8,25 +8,36 @@ import { CartDrawer } from '@/components/cart/CartDrawer'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { Toaster } from 'sonner'
-// @ts-ignore -- instalar com: npm install @vercel/analytics
-import { Analytics } from '@vercel/analytics/next'
-// @ts-ignore -- instalar com: npm install @vercel/speed-insights
-import { SpeedInsights } from '@vercel/speed-insights/next'
-import MetaPixel from '@/components/analytics/MetaPixel'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
-const BASE_URL = 'https://www.todaatividade.com.br'
-
 export const metadata: Metadata = {
   title: {
-    default: 'TodaAtividade',
+    default: 'TodaAtividade — Atividades escolares para imprimir',
     template: '%s | TodaAtividade',
   },
-  description: 'Atividades pedagogicas em PDF para ensino fundamental.',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? BASE_URL),
-  robots: { index: true, follow: true },
+  description:
+    'Atividades pedagógicas em PDF para ensino fundamental. Catálogo completo do 1º ao 9º ano. Baixe e imprima agora.',
+  keywords: ['atividades escolares', 'ensino fundamental', 'PDF', 'matemática', 'português', 'imprimir'],
+  authors: [{ name: 'TodaAtividade' }],
+  creator: 'TodaAtividade',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://todaatividade.com.br'),
+  openGraph: {
+    type: 'website',
+    locale: 'pt_BR',
+    url: 'https://todaatividade.com.br',
+    siteName: 'TodaAtividade',
+    title: 'TodaAtividade — Atividades escolares para imprimir',
+    description: 'Atividades pedagógicas em PDF para ensino fundamental, do 1º ao 9º ano.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -46,9 +57,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Toaster richColors position="top-right" />
           </CartProvider>
         </SessionProvider>
-        <MetaPixel />
-        <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   )

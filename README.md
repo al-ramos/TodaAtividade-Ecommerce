@@ -1,23 +1,59 @@
-# 🎓 TodaAtividade — Marketplace de Atividades Pedagógicas
+# TodaAtividade — E-commerce de Atividades Escolares
 
-[![Sprint 5 — Em andamento](https://img.shields.io/badge/Sprint%205-Em%20andamento-yellow)](https://github.com/al-ramos/TodaAtividade-Ecommerce)
-[![Next.js 14](https://img.shields.io/badge/Next.js%2014-black?logo=next.js&logoColor=white)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel&logoColor=white)](https://vercel.com/)
-[![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?logo=supabase&logoColor=white)](https://supabase.com/)
-[![CI](https://github.com/al-ramos/TodaAtividade-Ecommerce/actions/workflows/ci.yml/badge.svg)](https://github.com/al-ramos/TodaAtividade-Ecommerce/actions/workflows/ci.yml)
+## Como rodar localmente
 
-Marketplace B2C de atividades pedagógicas em PDF para o ensino fundamental. Professores e educadores encontram, visualizam uma prévia e compram materiais didáticos com download imediato após a confirmação do pagamento.
+### Pré-requisitos
+- Node.js 18+
+- .NET 8 SDK
+- Git
 
-**Domínio:** [todaatividade.com.br](https://todaatividade.com.br)
+### 1. Clone o repositório
+```bash
+git clone https://github.com/seu-usuario/todaatividade.git
+cd todaatividade
+```
+
+### 2. Configure as variáveis de ambiente
+```bash
+cp .env.example web/.env.local
+# Edite web/.env.local com suas credenciais
+```
+
+### 3. Rode o frontend (Next.js)
+```bash
+cd web
+npm install
+npm run dev
+# Acesse http://localhost:3000
+```
+
+### 4. Rode a API (.NET)
+```bash
+cd api/TodaAtividade.API
+dotnet restore
+dotnet run
+# Swagger: http://localhost:5000/swagger
+```
+
+### 5. Configure o banco (Supabase)
+1. Crie um projeto em https://supabase.com → região São Paulo
+2. Abra o SQL Editor e rode o conteúdo de `supabase/schema.sql`
 
 ---
 
-## 🛠️ Stack
-
-| Camada | Tecnologia |
-|--------|-----------|
-| Framework | Next.js 14 (App Router) + TypeScript |
-| Estilo | Tailwind CSS + shadcn/ui |
-| Auth | NextAuth.js (Google, Microsoft, Facebook, email/senha) |
-| Banco | Supabase (PostgreSQL + RLS)
+## Estrutura do projeto
+```
+E-COMMERCE/
+├── web/                    # Next.js 14 (frontend)
+│   ├── app/                # App Router pages
+│   ├── components/         # Componentes React
+│   └── lib/                # Utilitários e tipos
+├── api/                    # .NET 8 Web API
+│   ├── TodaAtividade.API/
+│   ├── TodaAtividade.Application/
+│   ├── TodaAtividade.Domain/
+│   └── TodaAtividade.Infrastructure/
+├── supabase/
+│   └── schema.sql          # Schema do banco
+└── .env.example            # Template de variáveis
+```

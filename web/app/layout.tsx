@@ -8,8 +8,11 @@ import { CartDrawer } from '@/components/cart/CartDrawer'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { Toaster } from 'sonner'
+// @ts-ignore -- instalar com: npm install @vercel/analytics
 import { Analytics } from '@vercel/analytics/next'
+// @ts-ignore -- instalar com: npm install @vercel/speed-insights
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import MetaPixel from '@/components/analytics/MetaPixel'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -18,45 +21,12 @@ const BASE_URL = 'https://www.todaatividade.com.br'
 
 export const metadata: Metadata = {
   title: {
-    default: 'TodaAtividade — Atividades escolares para imprimir',
+    default: 'TodaAtividade',
     template: '%s | TodaAtividade',
   },
-  description:
-    'Atividades pedagógicas em PDF para ensino fundamental. Catálogo completo do 1º ao 9º ano. Baixe e imprima agora.',
-  keywords: ['atividades escolares', 'ensino fundamental', 'PDF', 'matemática', 'português', 'imprimir'],
-  authors: [{ name: 'TodaAtividade' }],
-  creator: 'TodaAtividade',
+  description: 'Atividades pedagogicas em PDF para ensino fundamental.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? BASE_URL),
-  alternates: { canonical: BASE_URL },
-  openGraph: {
-    type: 'website',
-    locale: 'pt_BR',
-    url: BASE_URL,
-    siteName: 'TodaAtividade',
-    title: 'TodaAtividade — Atividades escolares para imprimir',
-    description: 'Atividades pedagógicas em PDF para ensino fundamental, do 1º ao 9º ano.',
-    images: [
-      {
-        url: `${BASE_URL}/og-default.jpg`,
-        width: 1200,
-        height: 630,
-        alt: 'TodaAtividade — Atividades escolares para imprimir',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'TodaAtividade — Atividades escolares para imprimir',
-    description: 'Atividades pedagógicas em PDF para ensino fundamental, do 1º ao 9º ano.',
-    images: [`${BASE_URL}/og-default.jpg`],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true },
-  },
-  // Google Search Console: adicione o código de verificação abaixo ao verificar o domínio
-  // verification: { google: 'SEU_CODIGO_AQUI' },
+  robots: { index: true, follow: true },
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -73,4 +43,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <Footer />
             </div>
             <CartDrawer />
-            <Toaster richColor
+            <Toaster richColors position="top-right" />
+          </CartProvider>
+        </SessionProvider>
+        <MetaPixel />
+        <Analytics />
+        <SpeedInsights />
+      </body>
+    </html>
+  )
+}

@@ -22,6 +22,7 @@ export default async function HomePage() {
   return (
     <>
       <OrganizationJsonLd />
+
       {/* Hero */}
       <section className="bg-gradient-to-br from-blue-600 to-blue-800 py-20 text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -34,15 +35,14 @@ export default async function HomePage() {
               Atividades escolares prontas para imprimir
             </h1>
             <p className="mt-6 text-lg text-blue-100">
-              Do 1º ao 9º ano do ensino fundamental. Visualize a prévia, compre com Pix ou cartão
-              e baixe o PDF na hora.
+              Do 1 ao 9 ano do ensino fundamental. Visualize a previa, compre com Pix ou cartao e baixe o PDF na hora.
             </p>
             <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link
                 href="/atividades"
                 className="flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-base font-semibold text-blue-700 shadow-lg hover:bg-blue-50 transition-colors"
               >
-                Ver catálogo <ArrowRight className="h-4 w-4" />
+                Ver catalogo <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/atividades?grade=1ano"
@@ -60,9 +60,9 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {[
-              { icon: BookOpen, title: 'Prévia antes de comprar', desc: 'Veja a 1ª página de cada atividade antes de decidir.' },
-              { icon: Download, title: 'Download imediato', desc: 'Após o pagamento, o PDF chega no seu e-mail na hora.' },
-              { icon: Shield, title: 'Pagamento seguro', desc: 'Pix, boleto e cartão via Mercado Pago. 100% seguro.' },
+              { icon: BookOpen, title: 'Previa antes de comprar', desc: 'Veja a 1a pagina de cada atividade antes de decidir.' },
+              { icon: Download, title: 'Download imediato', desc: 'Apos o pagamento, o PDF chega no seu e-mail na hora.' },
+              { icon: Shield, title: 'Pagamento seguro', desc: 'Pix, boleto e cartao via Mercado Pago. 100% seguro.' },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="flex items-start gap-4 rounded-xl p-4">
                 <div className="flex-shrink-0 rounded-lg bg-blue-100 p-2.5">
@@ -84,7 +84,7 @@ export default async function HomePage() {
           <div className="mb-8 flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-gray-900">Novidades</h2>
-              <p className="mt-1 text-sm text-gray-500">As últimas atividades adicionadas ao catálogo</p>
+              <p className="mt-1 text-sm text-gray-500">As ultimas atividades adicionadas ao catalogo</p>
             </div>
             <Link href="/atividades" className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700">
               Ver todas <ArrowRight className="h-4 w-4" />
@@ -100,5 +100,17 @@ export default async function HomePage() {
           ) : (
             <div className="rounded-xl border border-dashed border-gray-300 py-16 text-center">
               <BookOpen className="mx-auto h-10 w-10 text-gray-300" />
-              <p className="mt-3 text-sm text-gray-500">
-                Em breve, atividades incríveis a
+              <p className="mt-3 text-sm text-gray-500">Em breve, atividades incriveis aqui.</p>
+              <Link
+                href="/atividades"
+                className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:underline"
+              >
+                Explorar catalogo <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
+    </>
+  )
+}

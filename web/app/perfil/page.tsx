@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { User, Mail, ShieldCheck, ShoppingBag } from 'lucide-react'
+import { User, Mail, ShieldCheck, ShoppingBag, Gift } from 'lucide-react'
 import { authOptions } from '@/lib/auth'
 import SignOutButton from '@/components/profile/SignOutButton'
 
@@ -95,16 +95,16 @@ export default async function PerfilPage() {
               <ShoppingBag className="h-4 w-4" />
               Minhas compras
             </Link>
+            <Link
+              href="/minha-conta/indicacoes"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+            >
+              <Gift className="h-4 w-4" />
+              Indicações
+            </Link>
             <SignOutButton />
           </div>
         </div>
-
-        <p className="mt-4 text-center text-xs text-gray-400">
-          Precisa alterar sua senha?{' '}
-          <Link href="/recuperar-senha" className="text-blue-600 hover:underline">
-            Redefinir senha
-          </Link>
-        </p>
       </div>
     </div>
   )

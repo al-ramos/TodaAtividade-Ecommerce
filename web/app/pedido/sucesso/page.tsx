@@ -1,41 +1,140 @@
-'use client'
-
-import { Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
-import { CheckCircle2, Download, BookOpen } from 'lucide-react'
+import { getServerSession } from 'next-auth'
+import { redirect } from 'next/navigation'
+import { CheckCircle2, Clock, Download, BookOpen } from 'lucide-react'
 import Link from 'next/link'
+import { authOptions } from '@/lib/auth'
+import { supabaseAdmin } from '@/lib/supabase'
+import { formatPrice } from '@/lib/types'
+import { PendingPoller } from './PendingPoller'
 
-function SucessoContent() {
-  const searchParams = useSearchParams()
-  const orderId = searchParams.get('orderId')
+interface PageProps {
+  searchParams: { orderId?: string }
+}
+
+export default async function SucessoPage({ searchParams }: PageProps) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) {
+    redirect('/login')
+  }
+
+  const orderId = searchParams.orderId
+
+  type OrderRow = { id: string; status: string; total: number; payment_method: string }
+  let order: OrderRow | null = null
+
+  if (orderId) {
+    const { data } = await supabaseAdmin
+      .from('orders')
+      .select('id, status, total, payment_method')
+      .eq('id', orderId)
+      .eq('user_id', session.user.id)
+      .maybeSingle()
+    order = data as OrderRow | null
+  }
+
+  type ProductJoin = { id: string; title: string; thumbnail_url: string | null } | null
+  type ItemRow = {
+    product_id: string
+    price_at_purchase: number
+    products: ProductJoin | ProductJoin[]
+  }
+  let items: ItemRow[] = []
+
+  if (order) {
+    const { data } = await supabaseAdmin
+      .from('order_items')
+      .select('product_id, price_at_purchase, products!product_id(id, title, thumbnail_url)')
+      .eq('order_id', order.id)
+    items = (data ?? []) as ItemRow[]
+  }
+
+  const isPaid = order?.status === 'paid'
+  const isPending = order?.status === 'pending'
 
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center py-10">
-      <div className="max-w-md mx-auto px-4 w-full">
-        <div className="bg-white rounded-2xl shadow-sm p-8 text-center space-y-6">
-          <CheckCircle2 className="w-20 h-20 text-green-500 mx-auto" />
+      <div className="max-w-lg mx-auto px-4 w-full">
+        <div className="bg-white rounded-2xl shadow-sm p-8 space-y-6">
 
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Compra aprovada!</h1>
-            <p className="text-gray-500 mt-2 text-sm">
-              Obrigado pela compra! Suas atividades pedagógicas já estão disponíveis para download.
-            </p>
+          <div className="text-center space-y-3">
+            {isPending ? (
+              <Clock className="w-20 h-20 text-yellow-500 mx-auto" />
+            ) : (
+              <CheckCircle2 className="w-20 h-20 text-green-500 mx-auto" />
+            )}
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {isPending ? 'Aguardando pagamento' : 'Compra aprovada!'}
+              </h1>
+              <p className="text-gray-500 mt-1 text-sm">
+                {isPending
+                  ? 'Assim que o pagamento for confirmado, os botoes de download aparecirao aqui.'
+                  : 'Suas atividades pedagogicas estao prontas para download.'}
+              </p>
+            </div>
           </div>
 
           {orderId && (
-            <p className="text-xs text-gray-400 bg-gray-50 rounded-lg py-2 px-3 font-mono">
+            <p className="text-xs text-gray-400 bg-gray-50 rounded-lg py-2 px-3 font-mono text-center">
               Pedido: {orderId}
             </p>
           )}
 
+          {items.length > 0 && (
+            <div className="space-y-2">
+              <h2 className="text-sm font-semibold text-gray-700">Suas atividades</h2>
+              {items.map((item) => {
+                const product = (
+                  Array.isArray(item.products) ? item.products[0] : item.products
+                ) as ProductJoin
+                return (
+                  <div
+                    key={item.product_id}
+                    className="flex items-center justify-between gap-3 p-3 bg-gray-50 rounded-xl"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {product?.title ?? 'Atividade'}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        {formatPrice(item.price_at_purchase)}
+                      </p>
+                    </div>
+                    {isPaid ? (
+                      <a
+                        href={`/api/download/${orderId}/${item.product_id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="shrink-0 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        Baixar PDF
+                      </a>
+                    ) : (
+                      <span className="shrink-0 text-xs text-yellow-600 bg-yellow-50 border border-yellow-200 px-3 py-2 rounded-lg animate-pulse">
+                        Processando pagamento...
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
+          {isPending && items.length === 0 && (
+            <div className="text-center py-4 text-sm text-yellow-600 animate-pulse">
+              Processando pagamento...
+            </div>
+          )}
+
+          {order && (
+            <div className="flex justify-between items-center text-sm text-gray-700 border-t pt-4">
+              <span className="font-medium">Total pago</span>
+              <span className="font-bold text-gray-900">{formatPrice(order.total)}</span>
+            </div>
+          )}
+
           <div className="space-y-3">
-            <Link
-              href="/pedidos"
-              className="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
-            >
-              <Download className="w-4 h-4" />
-              Baixar minhas atividades
-            </Link>
             <Link
               href="/atividades"
               className="flex items-center justify-center gap-2 w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-lg transition-colors"
@@ -45,25 +144,13 @@ function SucessoContent() {
             </Link>
           </div>
 
-          <p className="text-xs text-gray-400">
-            Um e-mail de confirmação será enviado para o endereço cadastrado.
+          <p className="text-xs text-gray-400 text-center">
+            Um e-mail com os links de download tambem foi enviado para o endereco cadastrado.
           </p>
         </div>
       </div>
-    </main>
-  )
-}
 
-export default function SucessoPage() {
-  return (
-    <Suspense
-      fallback={
-        <main className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-gray-400 text-sm animate-pulse">Carregando...</div>
-        </main>
-      }
-    >
-      <SucessoContent />
-    </Suspense>
+      {isPending && <PendingPoller />}
+    </main>
   )
 }

@@ -1,3 +1,5 @@
+import { withSentryConfig } from '@sentry/nextjs'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -12,4 +14,18 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+const sentryOptions = {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: true,
+  widenClientFileUpload: true,
+  hideSourceMaps: true,
+  disableLogger: true,
+  automaticVercelMonitors: true,
+}
+
+// Só envolve com Sentry se as credenciais estiverem configuradas
+export default process.env.SENTRY_ORG
+  ? withSentryConfig(nextConfig, sentryOptions)
+  : nextConfig

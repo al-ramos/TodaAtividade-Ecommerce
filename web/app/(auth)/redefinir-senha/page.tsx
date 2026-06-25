@@ -10,7 +10,7 @@ import {
   CheckCircle,
   AlertCircle,
 } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase-browser'
 import { toast } from 'sonner'
 
 type SessionState = 'loading' | 'ready' | 'invalid'

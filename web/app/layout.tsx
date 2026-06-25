@@ -12,6 +12,8 @@ import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
+const BASE_URL = 'https://www.todaatividade.com.br'
+
 export const metadata: Metadata = {
   title: {
     default: 'TodaAtividade — Atividades escolares para imprimir',
@@ -22,42 +24,37 @@ export const metadata: Metadata = {
   keywords: ['atividades escolares', 'ensino fundamental', 'PDF', 'matemática', 'português', 'imprimir'],
   authors: [{ name: 'TodaAtividade' }],
   creator: 'TodaAtividade',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://todaatividade.com.br'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? BASE_URL),
+  alternates: { canonical: BASE_URL },
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    url: 'https://todaatividade.com.br',
+    url: BASE_URL,
     siteName: 'TodaAtividade',
     title: 'TodaAtividade — Atividades escolares para imprimir',
     description: 'Atividades pedagógicas em PDF para ensino fundamental, do 1º ao 9º ano.',
+    images: [
+      {
+        url: `${BASE_URL}/og-default.jpg`,
+        width: 1200,
+        height: 630,
+        alt: 'TodaAtividade — Atividades escolares para imprimir',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
+    title: 'TodaAtividade — Atividades escolares para imprimir',
+    description: 'Atividades pedagógicas em PDF para ensino fundamental, do 1º ao 9º ano.',
+    images: [`${BASE_URL}/og-default.jpg`],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: { index: true, follow: true },
   },
+  // Google Search Console: adicione o código de verificação abaixo ao verificar o domínio
+  // verification: { google: 'SEU_CODIGO_AQUI' },
 }
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession(authOptions)
-
-  return (
-    <html lang="pt-BR" className={inter.variable}>
-      <body className="min-h-screen bg-gray-50 antialiased">
-        <SessionProvider session={session}>
-          <CartProvider>
-            <div className="flex min-h-screen flex-col">
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
-            <CartDrawer />
-            <Toaster richColors position="top-right" />
-          </CartProvider>
-        </SessionProvider>
-      </body>
-    </html>
-  )
-}
+export default async function RootLayout({ childr

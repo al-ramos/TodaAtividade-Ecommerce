@@ -1,4 +1,39 @@
 import { withSentryConfig } from '@sentry/nextjs'
+import withPWAInit from 'next-pwa'
+
+const withPWA = withPWAInit({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+  register: true,
+  skipWaiting: true,
+  runtimeCaching: [
+    {
+      urlPattern: /^https:\/\/todaatividade\.com\.br\/$/,
+      handler: 'NetworkFirst',
+      options: { cacheName: 'homepage', expiration: { maxEntries: 1, maxAgeSeconds: 86400 } },
+    },
+    {
+      urlPattern: /^https:\/\/todaatividade\.com\.br\/atividades/,
+      handler: 'StaleWhileRevalidate',
+      options: { cacheName: 'catalog', expiration: { maxEntries: 50, maxAgeSeconds: 3600 } },
+    },
+    {
+      urlPattern: /^https:\/\/todaatividade\.com\.br\/blog/,
+      handler: 'StaleWhileRevalidate',
+      options: { cacheName: 'blog', expiration: { maxEntries: 30, maxAgeSeconds: 3600 } },
+    },
+    {
+      urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/,
+      handler: 'CacheFirst',
+      options: { cacheName: 'images', expiration: { maxEntries: 200, maxAgeSeconds: 604800 } },
+    },
+    {
+      urlPattern: /\.(?:js|css|woff|woff2)$/,
+      handler: 'StaleWhileRevalidate',
+      options: { cacheName: 'static-assets', expiration: { maxEntries: 100, maxAgeSeconds: 86400 } },
+    },
+  ],
+})
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -25,7 +60,8 @@ const sentryOptions = {
   automaticVercelMonitors: true,
 }
 
-// Só envolve com Sentry se as credenciais estiverem configuradas
+const configWithPWA = withPWA(nextConfig)
+
 export default process.env.SENTRY_ORG
-  ? withSentryConfig(nextConfig, sentryOptions)
-  : nextConfig
+  ? withSentryConfig(configWithPWA, sentryOptions)
+  : configWithPWA

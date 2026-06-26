@@ -8,7 +8,25 @@ import { createSupabaseServerClient, supabaseAdmin } from '@/lib/supabase'
 import ProductCard from '@/components/catalog/ProductCard'
 import FiltrosCatalogo from '@/components/catalog/FiltrosCatalogo'
 import ResultadosBusca from '@/components/catalog/ResultadosBusca'
+import { GRADE_LABELS, DISCIPLINE_LABELS } from '@/lib/types'
 import type { Product } from '@/lib/types'
+
+const GRADE_SLUGS: Array<{ slug: string; level: keyof typeof GRADE_LABELS }> = [
+  { slug: '1-ano', level: '1ano' }, { slug: '2-ano', level: '2ano' }, { slug: '3-ano', level: '3ano' },
+  { slug: '4-ano', level: '4ano' }, { slug: '5-ano', level: '5ano' }, { slug: '6-ano', level: '6ano' },
+  { slug: '7-ano', level: '7ano' }, { slug: '8-ano', level: '8ano' }, { slug: '9-ano', level: '9ano' },
+]
+
+const SUBJECT_SLUGS: Array<{ slug: string; label: string }> = [
+  { slug: 'matematica', label: 'Matemática' },
+  { slug: 'portugues', label: 'Português' },
+  { slug: 'ciencias', label: 'Ciências' },
+  { slug: 'historia', label: 'História' },
+  { slug: 'geografia', label: 'Geografia' },
+  { slug: 'artes', label: 'Artes' },
+  { slug: 'educacao-fisica', label: 'Educação Física' },
+  { slug: 'ingles', label: 'Inglês' },
+]
 
 interface ReviewSummary {
   product_id: string
@@ -181,6 +199,44 @@ export default async function CatalogPage({ searchParams }: PageProps) {
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Catálogo de Atividades</h1>
       </div>
+
+      {/* Explorar por série */}
+      <section className="mb-6">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
+          Explorar por série
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          {GRADE_SLUGS.map(({ slug, level }) => (
+            <Link
+              key={slug}
+              href={`/atividades/serie/${slug}`}
+              className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700
+                hover:bg-blue-100 hover:border-blue-300 transition-colors"
+            >
+              {GRADE_LABELS[level]}
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Explorar por disciplina */}
+      <section className="mb-8">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
+          Explorar por disciplina
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          {SUBJECT_SLUGS.map(({ slug, label }) => (
+            <Link
+              key={slug}
+              href={`/atividades/disciplina/${slug}`}
+              className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-sm font-medium text-gray-700
+                hover:bg-gray-100 hover:border-gray-300 transition-colors"
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
         {/* ── Sidebar de filtros ── */}

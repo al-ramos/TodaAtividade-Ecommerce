@@ -3,6 +3,9 @@ import { supabaseAdmin } from '@/lib/supabase'
 
 const BASE_URL = 'https://www.todaatividade.com.br'
 
+const GRADE_SLUGS = ['1-ano', '2-ano', '3-ano', '4-ano', '5-ano', '6-ano', '7-ano', '8-ano', '9-ano']
+const SUBJECT_SLUGS = ['matematica', 'portugues', 'ciencias', 'historia', 'geografia', 'artes', 'educacao-fisica', 'ingles']
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     {
@@ -29,6 +32,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'yearly',
       priority: 0.3,
     },
+    ...GRADE_SLUGS.map((grade) => ({
+      url: `${BASE_URL}/atividades/serie/${grade}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    })),
+    ...SUBJECT_SLUGS.map((subject) => ({
+      url: `${BASE_URL}/atividades/disciplina/${subject}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    })),
   ]
 
   const { data: products } = await supabaseAdmin

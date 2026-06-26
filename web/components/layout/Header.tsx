@@ -43,6 +43,9 @@ export default function Header() {
           <Link href="/bundles" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
             Kits
           </Link>
+          <Link href="/blog" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
+            Blog
+          </Link>
         </nav>
 
         {/* Actions */}
@@ -136,6 +139,9 @@ export default function Header() {
           </Link>
           <Link href="/bundles" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>
             Kits
+          </Link>
+          <Link href="/blog" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>
+            Blog
           </Link>
           {session && (
             <>

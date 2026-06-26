@@ -62,12 +62,12 @@ export default function InstallBanner() {
           <div>
             <p className="text-sm font-semibold text-gray-900">TodaAtividade</p>
             {showAndroid ? (
-              <p className="text-xs text-gray-500">Instale o app para acesso rapido</p>
+              <p className="text-xs text-gray-500">Instale o app da TodaAtividade no seu celular!</p>
             ) : (
               <p className="text-xs text-gray-500">
                 Toque em{' '}
-                <span className="font-medium">Compartilhar</span> e depois{' '}
-                <span className="font-medium">Adicionar a Tela de Inicio</span>
+                <span className="font-medium">Compartilhar ↑</span> e depois{' '}
+                <span className="font-medium">Adicionar à Tela de Início</span>
               </p>
             )}
           </div>
@@ -86,7 +86,7 @@ export default function InstallBanner() {
             className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
             aria-label="Fechar"
           >
-            x
+            ✕
           </button>
         </div>
       </div>

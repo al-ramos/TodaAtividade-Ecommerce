@@ -7,7 +7,9 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { createSupabaseServerClient, supabaseAdmin } from '@/lib/supabase'
 import { formatPrice, GRADE_LABELS, DISCIPLINE_LABELS, type Product } from '@/lib/types'
+import { getUserSubscriptionStatus } from '@/lib/subscription'
 import AddToCartButton from '@/components/catalog/AddToCartButton'
+import SubscriberDownloadButton from '@/components/subscription/SubscriberDownloadButton'
 import ProductCard from '@/components/catalog/ProductCard'
 import ShareButtons from '@/components/catalog/ShareButtons'
 import FavoritoButton from '@/components/catalog/FavoritoButton'
@@ -174,11 +176,14 @@ export default async function ProductPage({ params }: Props) {
 
   const userId = session?.user?.id
 
-  const [isFavorite, reviewsData, hasPurchased] = await Promise.all([
+  const [isFavorite, reviewsData, hasPurchased, subscription] = await Promise.all([
     userId ? getIsFavorite(userId, product.id) : Promise.resolve(false),
     getReviewsData(product.id, userId),
     userId ? getHasPurchased(userId, product.id) : Promise.resolve(false),
+    userId ? getUserSubscriptionStatus(userId) : Promise.resolve(null),
   ])
+
+  const isSubscriber = subscription?.isActive ?? false
 
   return (
     <>
@@ -255,20 +260,32 @@ export default async function ProductPage({ params }: Props) {
           )}
 
           {/* CTA */}
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <AddToCartButton product={product} />
-            <Link
-              href="/checkout"
-              className="flex items-center justify-center gap-2 rounded-xl border border-blue-600 px-5 py-3 text-sm font-semibold text-blue-600 hover:bg-blue-50 transition-colors"
-            >
-              Comprar agora
-            </Link>
-            <FavoritoButton
-              productId={product.id}
-              initialIsFavorite={isFavorite}
-              size="md"
-            />
-          </div>
+          {isSubscriber ? (
+            /* Assinante: mostra botão de download direto */
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <SubscriberDownloadButton productId={product.id} />
+              <FavoritoButton
+                productId={product.id}
+                initialIsFavorite={isFavorite}
+                size="md"
+              />
+            </div>
+          ) : (
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <AddToCartButton product={product} />
+              <Link
+                href="/checkout"
+                className="flex items-center justify-center gap-2 rounded-xl border border-blue-600 px-5 py-3 text-sm font-semibold text-blue-600 hover:bg-blue-50 transition-colors"
+              >
+                Comprar agora
+              </Link>
+              <FavoritoButton
+                productId={product.id}
+                initialIsFavorite={isFavorite}
+                size="md"
+              />
+            </div>
+          )}
 
           {/* Trust badges */}
           <div className="mt-5 flex flex-wrap gap-3">

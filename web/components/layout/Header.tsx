@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { ShoppingCart, User, LogOut, BookOpen, Menu, X, Heart } from 'lucide-react'
+import { ShoppingCart, User, LogOut, BookOpen, Menu, X, Heart, Sparkles } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useCart } from '@/lib/cart-context'
@@ -100,6 +100,9 @@ export default function Header() {
                   <Link href="/minha-conta/pedidos" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                     <ShoppingCart className="h-4 w-4" /> Minhas compras
                   </Link>
+                  <Link href="/minha-conta/assinatura" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                    <Sparkles className="h-4 w-4 text-yellow-500" /> Assinatura
+                  </Link>
                   <button
                     onClick={() => signOut({ callbackUrl: '/' })}
                     className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
@@ -159,6 +162,9 @@ export default function Header() {
               </Link>
               <Link href="/minha-conta/pedidos" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>
                 Minhas compras
+              </Link>
+              <Link href="/minha-conta/assinatura" className="flex items-center gap-1.5 text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>
+                <Sparkles className="h-4 w-4 text-yellow-500" /> Assinatura
               </Link>
             </>
           )}

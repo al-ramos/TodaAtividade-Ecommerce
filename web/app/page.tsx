@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from '@/lib/supabase'
 import ProductCard from '@/components/catalog/ProductCard'
 import type { Product } from '@/lib/types'
 import { OrganizationJsonLd } from '@/components/seo/OrganizationJsonLd'
+import NewsletterBanner from '@/components/newsletter/NewsletterBanner'
 
 async function getFeaturedProducts(): Promise<Product[]> {
   const supabase = createSupabaseServerClient()
@@ -111,6 +112,8 @@ export default async function HomePage() {
           )}
         </div>
       </section>
+
+      <NewsletterBanner />
     </>
   )
 }

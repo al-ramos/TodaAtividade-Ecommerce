@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
-import { LayoutDashboard, BookOpen, ShoppingBag, Upload, LogOut, Tag, Package, Star, FileText, Mail } from 'lucide-react'
+import { LayoutDashboard, BookOpen, ShoppingBag, Upload, LogOut, Tag, Package, Star, FileText, Mail, Camera } from 'lucide-react'
 import { authOptions } from '@/lib/auth'
 
 const navItems = [
@@ -13,6 +13,7 @@ const navItems = [
   { href: '/admin/avaliacoes', label: 'Avaliações', icon: Star },
   { href: '/admin/blog', label: 'Blog', icon: FileText },
   { href: '/admin/newsletter', label: 'Newsletter', icon: Mail },
+  { href: '/admin/ugc', label: 'UGC Fotos', icon: Camera },
 ]
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

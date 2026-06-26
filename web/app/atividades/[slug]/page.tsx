@@ -13,6 +13,8 @@ import ShareButtons from '@/components/catalog/ShareButtons'
 import FavoritoButton from '@/components/catalog/FavoritoButton'
 import PDFPreviewButton from '@/components/catalog/PDFPreviewButton'
 import ReviewsSection, { type ReviewsSectionData } from '@/components/reviews/ReviewsSection'
+import UgcGallery from '@/components/ugc/UgcGallery'
+import UgcUploadButton from '@/components/ugc/UgcUploadButton'
 import { ProductJsonLd } from '@/components/seo/ProductJsonLd'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import { Breadcrumb } from '@/components/ui/Breadcrumb'
@@ -63,6 +65,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = product.description.slice(0, 160)
   const url = `${BASE_URL}/atividades/${params.slug}`
 
+  // OG image dinâmico via /api/og
+  const ogImageUrl = new URL(`${BASE_URL}/api/og`)
+  ogImageUrl.searchParams.set('title', product.title)
+  ogImageUrl.searchParams.set('grade', GRADE_LABELS[product.grade_level] ?? product.grade_level)
+  ogImageUrl.searchParams.set('discipline', DISCIPLINE_LABELS[product.discipline] ?? product.discipline)
+  const ogImage = ogImageUrl.toString()
+
   return {
     title: product.title, // renderizado como "{título} | TodaAtividade" via template
     description,
@@ -76,9 +85,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: 'pt_BR',
       images: [
         {
-          url: product.thumbnail_url,
-          width: 800,
-          height: 1100,
+          url: ogImage,
+          width: 1200,
+          height: 630,
           alt: product.title,
         },
       ],
@@ -87,7 +96,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title: `${product.title} | TodaAtividade`,
       description,
-      images: [product.thumbnail_url],
+      images: [ogImage],
     },
   }
 }
@@ -300,6 +309,18 @@ export default async function ProductPage({ params }: Props) {
           </div>
         </div>
       </div>
+
+      {/* UGC — Galeria de fotos de uso */}
+      <div className="mt-16">
+        <UgcGallery activityId={product.id} />
+      </div>
+
+      {/* Upload de foto (apenas para compradores) */}
+      {hasPurchased && (
+        <div className="mt-6">
+          <UgcUploadButton activityId={product.id} hasPurchased={hasPurchased} />
+        </div>
+      )}
 
       {/* Avaliações */}
       <div className="mt-16">

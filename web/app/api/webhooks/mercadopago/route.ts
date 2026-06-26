@@ -211,5 +211,25 @@ export async function POST(req: NextRequest) {
     console.error('[webhook/mp] Falha ao enviar e-mail para %s:', userEmail, err)
   }
 
+  // 10. Disparar push notification (não-bloqueante)
+  try {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://todaatividade.com.br'
+    await fetch(`${appUrl}/api/push/send`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-internal-secret': process.env.INTERNAL_SECRET ?? '',
+      },
+      body: JSON.stringify({
+        userId: order.user_id,
+        title: 'Pedido aprovado!',
+        body: 'Seu pagamento foi confirmado. Acesse Minha Conta para baixar suas atividades.',
+        url: '/minha-conta/pedidos',
+      }),
+    })
+  } catch (pushError) {
+    console.error('Push notification failed (non-fatal):', pushError)
+  }
+
   return NextResponse.json({ ok: true })
 }

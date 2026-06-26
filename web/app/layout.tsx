@@ -15,6 +15,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import MetaPixel from '@/components/analytics/MetaPixel'
 import InstallBanner from '@/components/pwa/InstallBanner'
 import BottomNav from '@/components/pwa/BottomNav'
+import PushPermissionBanner from '@/components/pwa/PushPermissionBanner'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -69,6 +70,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <SpeedInsights />
         <BottomNav />
         <InstallBanner />
+        <PushPermissionBanner />
       </body>
     </html>
   )

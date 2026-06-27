@@ -82,19 +82,28 @@ export default async function HomePage() {
       <div className="bg-[#7B3F7B] py-4">
         <div className="max-w-6xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { icon: '📥', title: 'Download Automático', sub: 'PDF na hora, sem espera' },
-            { icon: '🎨', title: 'Recursos Pedagógicos', sub: 'Conteúdo de qualidade' },
-            { icon: '⚡', title: 'Compra Rápida', sub: 'Pix, cartão ou boleto' },
-            { icon: '💬', title: 'Suporte WhatsApp', sub: 'Atendimento rápido' },
-          ].map((item) => (
-            <div key={item.title} className="flex items-center gap-3">
-              <span className="text-2xl">{item.icon}</span>
-              <div>
-                <p className="text-white text-sm font-semibold">{item.title}</p>
-                <p className="text-purple-200 text-xs">{item.sub}</p>
-              </div>
-            </div>
-          ))}
+            { icon: '📥', title: 'Download Automático', sub: 'PDF na hora, sem espera', href: undefined },
+            { icon: '🎨', title: 'Recursos Pedagógicos', sub: 'Conteúdo de qualidade', href: undefined },
+            { icon: '⚡', title: 'Compra Rápida', sub: 'Pix, cartão ou boleto', href: undefined },
+            { icon: '💬', title: 'Suporte WhatsApp', sub: 'Atendimento rápido', href: 'https://wa.me/5511969622111' },
+          ].map((item) => {
+            const inner = (
+              <>
+                <span className="text-2xl">{item.icon}</span>
+                <div>
+                  <p className="text-white text-sm font-semibold">{item.title}</p>
+                  <p className="text-purple-200 text-xs">{item.sub}</p>
+                </div>
+              </>
+            )
+            return item.href ? (
+              <a key={item.title} href={item.href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                {inner}
+              </a>
+            ) : (
+              <div key={item.title} className="flex items-center gap-3">{inner}</div>
+            )
+          })}
         </div>
       </div>
 

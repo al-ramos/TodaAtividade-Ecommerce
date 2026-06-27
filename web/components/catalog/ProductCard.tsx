@@ -22,7 +22,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   return (
     <div className={cn(
-      'group relative flex flex-col rounded-2xl border border-rose-100 bg-white',
+      'group relative flex flex-col rounded-2xl border border-border bg-white',
       'overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5',
       className
     )}>
@@ -32,7 +32,7 @@ export default function ProductCard({
       </div>
 
       {/* Thumbnail */}
-      <Link href={`/atividades/${product.slug}`} className="relative block aspect-[3/4] overflow-hidden bg-rose-50">
+      <Link href={`/atividades/${product.slug}`} className="relative block aspect-[3/4] overflow-hidden bg-primary-veryLight">
         <Image
           src={product.thumbnail_url}
           alt={product.title}
@@ -53,7 +53,7 @@ export default function ProductCard({
       <div className="flex flex-1 flex-col p-4">
         {/* Badges */}
         <div className="mb-2 flex flex-wrap gap-1.5">
-          <span className="rounded-full bg-rose-50 px-2 py-0.5 text-xs font-medium text-rose-600">
+          <span className="rounded-full bg-primary-veryLight px-2 py-0.5 text-xs font-medium text-primary">
             {GRADE_LABELS[product.grade_level]}
           </span>
           <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
@@ -63,7 +63,7 @@ export default function ProductCard({
 
         {/* Título */}
         <Link href={`/atividades/${product.slug}`}>
-          <h3 className="line-clamp-2 text-sm font-semibold text-gray-900 hover:text-rose-500 transition-colors leading-snug">
+          <h3 className="line-clamp-2 text-sm font-semibold text-gray-900 hover:text-primary transition-colors leading-snug">
             {product.title}
           </h3>
         </Link>
@@ -74,7 +74,7 @@ export default function ProductCard({
             href={`/api/preview/${product.id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-rose-500 hover:text-rose-600 transition-colors"
+            className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-primary hover:text-[#9B3A58] transition-colors"
           >
             <Eye className="h-3 w-3" />
             Ver prévia
@@ -97,11 +97,11 @@ export default function ProductCard({
 
         {/* Preço + CTA */}
         <div className="mt-3 flex items-center justify-between">
-          <span className="text-lg font-bold text-gray-900">
+          <span className="text-lg font-bold text-primary">
             {formatPrice(product.price)}
           </span>
-          <button className="flex items-center gap-1.5 rounded-xl bg-rose-500 px-3 py-1.5 text-xs font-medium text-white
-            hover:bg-rose-600 active:scale-95 transition-all duration-150">
+          <button className="flex items-center gap-1.5 rounded-xl bg-primary px-3 py-1.5 text-xs font-medium text-white
+            hover:bg-[#9B3A58] active:scale-95 transition-all duration-150">
             <ShoppingCart className="h-3.5 w-3.5" />
             Comprar
           </button>

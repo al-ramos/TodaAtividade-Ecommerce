@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, BookOpen, Shield, Download } from 'lucide-react'
+import { ArrowRight, BookOpen, Shield, Download, Zap, MessageCircle, Palette } from 'lucide-react'
 import { createSupabaseServerClient } from '@/lib/supabase'
 import ProductCard from '@/components/catalog/ProductCard'
 import type { Product } from '@/lib/types'
@@ -27,6 +27,7 @@ export default async function HomePage() {
 
       {/* Hero */}
       <section>
+        {/* Banner principal */}
         <div className="relative w-full">
           <Image
             src="/banner-hero.png"
@@ -37,6 +38,8 @@ export default async function HomePage() {
             priority
           />
         </div>
+
+        {/* CTAs */}
         <div className="flex flex-col items-center gap-4 py-6 sm:flex-row sm:justify-center px-4">
           <Link
             href="/atividades"
@@ -50,6 +53,26 @@ export default async function HomePage() {
           >
             Anos Iniciais
           </Link>
+        </div>
+
+        {/* Faixa de benefícios */}
+        <div className="bg-[#26A69A] py-6 px-4">
+          <div className="mx-auto max-w-7xl grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { icon: Download,      title: 'Download Automático',     sub: 'PDF na hora, sem espera' },
+              { icon: Palette,       title: 'Recursos Pedagógicos',    sub: 'Conteúdo de qualidade' },
+              { icon: Zap,           title: 'Compra Rápida',           sub: 'Pix, cartão ou boleto' },
+              { icon: MessageCircle, title: 'Suporte via WhatsApp',    sub: 'Atendimento rápido' },
+            ].map(({ icon: Icon, title, sub }) => (
+              <div key={title} className="flex items-center gap-3 text-white">
+                <Icon className="h-8 w-8 flex-shrink-0 opacity-90" />
+                <div>
+                  <p className="font-bold text-sm leading-tight">{title}</p>
+                  <p className="text-xs opacity-80">{sub}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

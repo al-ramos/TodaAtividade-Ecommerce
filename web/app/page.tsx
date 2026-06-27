@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { ArrowRight, BookOpen, Shield, Download, Star } from 'lucide-react'
+import Image from 'next/image'
+import { ArrowRight, BookOpen, Shield, Download } from 'lucide-react'
 import { createSupabaseServerClient } from '@/lib/supabase'
 import ProductCard from '@/components/catalog/ProductCard'
 import type { Product } from '@/lib/types'
@@ -24,40 +25,80 @@ export default async function HomePage() {
     <>
       <OrganizationJsonLd />
 
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-[#B54E6E] to-[#E8A0B0] py-20 text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-sm font-medium">
-              <Star className="h-3.5 w-3.5 fill-yellow-300 text-yellow-300" />
-              +500 atividades disponíveis
+      {/* HERO */}
+      <section className="relative w-full overflow-hidden bg-[#FDF8F5]" style={{ minHeight: '400px' }}>
+        <div className="absolute inset-4 border border-[#E8C4B8] pointer-events-none" />
+        <div className="absolute inset-6 border border-[#F0D0C0]/50 pointer-events-none" />
+
+        <div className="relative z-10 max-w-6xl mx-auto px-8 py-14 flex items-center gap-12">
+          {/* ESQUERDA */}
+          <div className="flex-1 space-y-4">
+            <span className="inline-block text-xs tracking-widest uppercase text-[#B54E6E] border border-[#E8C4B8] px-4 py-1 rounded-full bg-white/60">
+              ✦ Recursos Pedagógicos ✦
             </span>
-            <h1 className="mt-4 text-4xl font-heading font-bold leading-tight sm:text-5xl lg:text-6xl">
-              Atividades escolares prontas para imprimir
+            <h1 className="font-script text-5xl md:text-6xl leading-tight text-[#8B3A55]">
+              Toda Atividade
             </h1>
-            <p className="mt-6 text-lg text-[#FDF0F4]">
-              Do 1 ao 9 ano do ensino fundamental. Visualize a prévia, compre com Pix ou cartão e baixe o PDF na hora.
+            <div className="flex items-center gap-3">
+              <div className="h-px bg-[#E8C4B8] w-20" />
+              <span className="text-[#C8943A] text-sm">✦</span>
+              <div className="h-px bg-[#E8C4B8] w-20" />
+            </div>
+            <p className="text-[#9B6070] text-lg italic font-light leading-relaxed max-w-md">
+              Atividades, jogos e materiais prontos para educação infantil e fundamental
             </p>
-            <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Link
-                href="/atividades"
-                className="flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-base font-semibold text-primary shadow-lg hover:bg-primary-veryLight transition-colors"
-              >
-                Ver catálogo <ArrowRight className="h-4 w-4" />
+            <p className="text-[#B89098] text-sm tracking-wide">
+              Download imediato · Alta qualidade · Feito com carinho
+            </p>
+            <div className="flex items-center gap-4 pt-2">
+              <Link href="/atividades" className="bg-[#B54E6E] text-white text-sm px-7 py-3 rounded-full hover:bg-[#9A3D5C] transition-colors shadow-sm">
+                Ver Recursos
               </Link>
-              <Link
-                href="/atividades?grade=1ano"
-                className="flex items-center gap-2 rounded-xl border border-white/30 px-6 py-3 text-base font-medium text-white hover:bg-white/10 transition-colors"
-              >
-                Anos Iniciais
+              <Link href="#diferenciais" className="text-[#B54E6E] text-sm border border-[#E8C4B8] px-6 py-3 rounded-full hover:bg-[#FDF0F4] transition-colors">
+                Como funciona →
               </Link>
             </div>
+          </div>
+
+          {/* DIREITA */}
+          <div className="hidden md:flex flex-col items-center justify-center flex-shrink-0">
+            <div className="w-52 h-52 rounded-full border-2 border-[#E8C4B8] bg-white/70 flex items-center justify-center shadow-sm">
+              <Image
+                src="/logo-todaatividade.png"
+                width={120}
+                height={120}
+                alt="TodaAtividade"
+                className="rounded-full"
+                priority
+              />
+            </div>
+            <p className="mt-3 text-[#C8943A] text-xs tracking-widest uppercase">todaatividade.com.br</p>
           </div>
         </div>
       </section>
 
+      {/* BENEFIT STRIP */}
+      <div className="bg-[#7B3F7B] py-4">
+        <div className="max-w-6xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { icon: '📥', title: 'Download Automático', sub: 'PDF na hora, sem espera' },
+            { icon: '🎨', title: 'Recursos Pedagógicos', sub: 'Conteúdo de qualidade' },
+            { icon: '⚡', title: 'Compra Rápida', sub: 'Pix, cartão ou boleto' },
+            { icon: '💬', title: 'Suporte WhatsApp', sub: 'Atendimento rápido' },
+          ].map((item) => (
+            <div key={item.title} className="flex items-center gap-3">
+              <span className="text-2xl">{item.icon}</span>
+              <div>
+                <p className="text-white text-sm font-semibold">{item.title}</p>
+                <p className="text-purple-200 text-xs">{item.sub}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Diferenciais */}
-      <section className="border-b border-border bg-white py-10">
+      <section id="diferenciais" className="border-b border-border bg-white py-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {[
@@ -84,6 +125,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-8 flex items-center justify-between">
             <div>
+              <p className="font-script text-2xl text-primary">Novas atividades para sua sala!</p>
               <h2 className="text-2xl font-bold text-gray-900">Novidades</h2>
               <p className="mt-1 text-sm text-gray-500">As últimas atividades adicionadas ao catálogo</p>
             </div>

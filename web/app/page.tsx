@@ -45,7 +45,8 @@ export default async function HomePage() {
               <div className="h-px bg-[#E8C4B8] w-20" />
             </div>
             <p className="text-[#9B6070] text-lg italic font-light leading-relaxed max-w-md">
-              Atividades, jogos e materiais prontos para educação infantil e fundamental
+              Materiais Pedagógicos,<br />
+              feito com carinho, para ensinar e inspirar!
             </p>
             <p className="text-[#B89098] text-sm tracking-wide">
               Download imediato · Alta qualidade · Feito com carinho

@@ -2,26 +2,90 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * ─────────────────────────────────────────────
+ *  TEMA: Rosa Suave
+ *  Para trocar o tema, basta alterar os valores
+ *  abaixo. Cada variável usa HSL separado por
+ *  espaços (sem "hsl()"), pois o Tailwind monta
+ *  a cor com hsl(var(--nome)).
+ *
+ *  Temas disponíveis (comentados abaixo):
+ *    - Rosa Suave  ← ativo
+ *    - Lavanda
+ *    - Pêssego
+ * ─────────────────────────────────────────────
+ */
+
 @layer base {
   :root {
-    --radius: 0.5rem;
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* ── Raio de borda ── */
+    --radius: 0.75rem;
+
+    /* ── Fundo e texto principal ── */
+    --background: 350 60% 99%;          /* branco com leve toque rosado */
+    --foreground: 340 20% 18%;          /* cinza-rosado escuro */
+
+    /* ── Cartões ── */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --card-foreground: 340 20% 18%;
+
+    /* ── Cor primária  (rosa principal) ── */
+    --primary: 340 72% 58%;
+    --primary-foreground: 0 0% 100%;
+
+    /* ── Cor secundária (rosa pálido) ── */
+    --secondary: 340 50% 94%;
+    --secondary-foreground: 340 30% 30%;
+
+    /* ── Elementos mudos ── */
+    --muted: 340 30% 95%;
+    --muted-foreground: 340 15% 50%;
+
+    /* ── Destaque ── */
+    --accent: 340 40% 92%;
+    --accent-foreground: 340 30% 28%;
+
+    /* ── Destrutivo (erros) ── */
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* ── Bordas e inputs ── */
+    --border: 340 35% 88%;
+    --input: 340 35% 88%;
+    --ring: 340 72% 58%;
+
+    /*
+     * ── Trocar para Lavanda ──
+     * --background: 270 50% 99%;
+     * --foreground: 270 20% 18%;
+     * --primary: 270 60% 60%;
+     * --primary-foreground: 0 0% 100%;
+     * --secondary: 270 40% 94%;
+     * --secondary-foreground: 270 30% 30%;
+     * --muted: 270 30% 95%;
+     * --muted-foreground: 270 15% 50%;
+     * --accent: 270 40% 92%;
+     * --accent-foreground: 270 30% 28%;
+     * --border: 270 30% 88%;
+     * --input: 270 30% 88%;
+     * --ring: 270 60% 60%;
+     *
+     * ── Trocar para Pêssego ──
+     * --background: 20 60% 99%;
+     * --foreground: 20 20% 18%;
+     * --primary: 20 80% 58%;
+     * --primary-foreground: 0 0% 100%;
+     * --secondary: 20 50% 94%;
+     * --secondary-foreground: 20 30% 30%;
+     * --muted: 20 30% 95%;
+     * --muted-foreground: 20 15% 50%;
+     * --accent: 20 40% 92%;
+     * --accent-foreground: 20 30% 28%;
+     * --border: 20 35% 88%;
+     * --input: 20 35% 88%;
+     * --ring: 20 80% 58%;
+     */
   }
 
   * {
@@ -32,6 +96,14 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
+
+    /* Pontinhos decorativos — inspirado na Aula Criativa */
+    background-image: radial-gradient(
+      circle,
+      hsl(340 55% 88% / 0.55) 1.5px,
+      transparent 1.5px
+    );
+    background-size: 24px 24px;
   }
 }
 

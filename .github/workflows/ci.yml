@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build & Type Check
+    name: Test, Type Check & Build
     runs-on: ubuntu-latest
 
     steps:
@@ -26,6 +26,10 @@ jobs:
         working-directory: web
         run: npm ci
 
+      - name: Unit tests
+        working-directory: web
+        run: npm test
+
       - name: TypeScript check
         working-directory: web
         run: npx tsc --noEmit
@@ -36,3 +40,30 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+  # ─── Deploy automático na Vercel ────────────────────────────────────────────
+  # Pré-requisito: configurar os 3 secrets abaixo em:
+  #   GitHub repo → Settings → Secrets and variables → Actions
+  #
+  #   VERCEL_TOKEN      → vercel.com/account/tokens
+  #   VERCEL_ORG_ID     → team_Yn2gBLTFiB5nsWNIMQhAudEK  (ver .vercel/project.json)
+  #   VERCEL_PROJECT_ID → prj_DQuV8sLFOBOy6SQSwstGF1WtLKJs (ver .vercel/project.json)
+  # ────────────────────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to Vercel (production)
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./web
+          vercel-args: '--prod'

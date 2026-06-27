@@ -26,104 +26,37 @@ export default async function HomePage() {
       <OrganizationJsonLd />
 
       {/* Hero */}
-      <section className="relative w-full overflow-hidden bg-[#FDF8F5]" style={{ minHeight: '420px' }}>
-        {/* Moldura decorativa dupla */}
-        <div className="absolute inset-4 border border-[#E8C4B8] pointer-events-none rounded-sm" />
-        <div className="absolute inset-6 border border-[#F0D0C0]/50 pointer-events-none rounded-sm" />
+      <section>
+        {/* Banner principal */}
+        <div className="relative w-full">
+          <Image
+            src="/banner-hero.png"
+            width={1200}
+            height={400}
+            alt="TodaAtividade - Materiais Pedagógicos"
+            className="w-full h-auto"
+            priority
+          />
+        </div>
 
-        {/* Ornamentos nos quatro cantos */}
-        {(['top-3 left-3', 'top-3 right-3', 'bottom-3 left-3', 'bottom-3 right-3'] as const).map((pos) => (
-          <div key={pos} className={`absolute ${pos} w-4 h-4 border border-[#E8C4B8] rounded-full pointer-events-none`} />
-        ))}
-
-        <div className="relative z-10 mx-auto max-w-6xl px-8 py-16 flex items-center gap-12">
-
-          {/* ESQUERDA — conteúdo */}
-          <div className="flex-1 space-y-5">
-            {/* Tag */}
-            <span className="inline-block text-xs tracking-widest uppercase text-[#B54E6E] border border-[#E8C4B8] px-4 py-1 rounded-full bg-white/60">
-              ✦ Recursos Pedagógicos ✦
-            </span>
-
-            {/* Título Dancing Script */}
-            <h1 className="font-script text-5xl md:text-6xl leading-tight text-[#8B3A55]">
-              Toda Atividade
-            </h1>
-
-            {/* Divisor ornamental */}
-            <div className="flex items-center gap-3">
-              <div className="h-px bg-[#E8C4B8] w-20" />
-              <span className="text-[#C8943A] text-sm">✦</span>
-              <div className="h-px bg-[#E8C4B8] w-20" />
-            </div>
-
-            {/* Subtítulo */}
-            <p className="text-[#9B6070] text-lg italic font-light leading-relaxed max-w-md">
-              Atividades, jogos e materiais prontos para educação infantil e fundamental
-            </p>
-
-            <p className="text-[#B89098] text-sm tracking-wide">
-              Download imediato · Alta qualidade · Feito com carinho
-            </p>
-
-            {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <Link
-                href="/atividades"
-                className="bg-[#B54E6E] text-white text-sm px-7 py-3 rounded-full hover:bg-[#9A3D5C] transition-colors shadow-sm"
-              >
-                Ver Recursos
-              </Link>
-              <Link
-                href="#diferenciais"
-                className="text-[#B54E6E] text-sm border border-[#E8C4B8] px-6 py-3 rounded-full hover:bg-[#FDF0F4] transition-colors flex items-center gap-1"
-              >
-                Como funciona <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-          </div>
-
-          {/* DIREITA — ornamento circular delicado */}
-          <div className="hidden md:flex flex-col items-center justify-center flex-shrink-0">
-            <div className="relative w-56 h-56">
-              {/* Anéis externos */}
-              <div className="absolute inset-0 rounded-full border-2 border-[#E8C4B8]" />
-              <div className="absolute inset-3 rounded-full border border-[#F0D0C0]/70" />
-              {/* Raios decorativos */}
-              {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => (
-                <div key={deg} className="absolute inset-0 flex items-center justify-center">
-                  <div
-                    className="absolute bg-[#F4C0D1]/30"
-                    style={{
-                      width: '1px',
-                      height: '50%',
-                      top: 0,
-                      left: '50%',
-                      transformOrigin: 'bottom center',
-                      transform: `rotate(${deg}deg)`,
-                    }}
-                  />
-                </div>
-              ))}
-              {/* Círculo interno com logo */}
-              <div className="absolute inset-8 rounded-full bg-white/80 border border-[#E8C4B8] flex items-center justify-center shadow-sm">
-                <Image
-                  src="/logo-todaatividade.png"
-                  width={70}
-                  height={70}
-                  alt="TodaAtividade"
-                  className="rounded-full opacity-90"
-                  priority
-                />
-              </div>
-            </div>
-            <p className="mt-3 text-[#C8943A] text-xs tracking-widest uppercase">todaatividade.com.br</p>
-          </div>
-
+        {/* CTAs */}
+        <div className="flex flex-col items-center gap-4 py-6 sm:flex-row sm:justify-center px-4">
+          <Link
+            href="/atividades"
+            className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-base font-semibold text-white shadow-lg hover:bg-[#9B3A58] transition-colors"
+          >
+            Ver catálogo <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link
+            href="/atividades?grade=1ano"
+            className="flex items-center gap-2 rounded-xl border border-primary px-6 py-3 text-base font-medium text-primary hover:bg-primary/10 transition-colors"
+          >
+            Anos Iniciais
+          </Link>
         </div>
 
         {/* Faixa de benefícios */}
-        <div className="bg-[#7B3F7B] py-4 px-4">
+        <div className="bg-[#26A69A] py-6 px-4">
           <div className="mx-auto max-w-7xl grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
               { icon: Download,      title: 'Download Automático',     sub: 'PDF na hora, sem espera' },
@@ -144,7 +77,7 @@ export default async function HomePage() {
       </section>
 
       {/* Diferenciais */}
-      <section id="diferenciais" className="border-b border-border bg-white py-10">
+      <section className="border-b border-border bg-white py-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {[

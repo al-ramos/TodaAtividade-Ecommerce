@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from '@/lib/supabase'
 import ProductCard from '@/components/catalog/ProductCard'
 import type { Product } from '@/lib/types'
 import { OrganizationJsonLd } from '@/components/seo/OrganizationJsonLd'
+import NewsletterBanner from '@/components/newsletter/NewsletterBanner'
 
 async function getFeaturedProducts(): Promise<Product[]> {
   const supabase = createSupabaseServerClient()
@@ -22,8 +23,9 @@ export default async function HomePage() {
   return (
     <>
       <OrganizationJsonLd />
+
       {/* Hero */}
-      <section className="bg-gradient-to-br from-blue-600 to-blue-800 py-20 text-white">
+      <section className="bg-gradient-to-br from-rose-400 to-rose-600 py-20 text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-sm font-medium">
@@ -33,14 +35,13 @@ export default async function HomePage() {
             <h1 className="mt-4 text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
               Atividades escolares prontas para imprimir
             </h1>
-            <p className="mt-6 text-lg text-blue-100">
-              Do 1º ao 9º ano do ensino fundamental. Visualize a prévia, compre com Pix ou cartão
-              e baixe o PDF na hora.
+            <p className="mt-6 text-lg text-rose-100">
+              Do 1 ao 9 ano do ensino fundamental. Visualize a prévia, compre com Pix ou cartão e baixe o PDF na hora.
             </p>
             <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link
                 href="/atividades"
-                className="flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-base font-semibold text-blue-700 shadow-lg hover:bg-blue-50 transition-colors"
+                className="flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-base font-semibold text-rose-600 shadow-lg hover:bg-rose-50 transition-colors"
               >
                 Ver catálogo <ArrowRight className="h-4 w-4" />
               </Link>
@@ -56,7 +57,7 @@ export default async function HomePage() {
       </section>
 
       {/* Diferenciais */}
-      <section className="border-b border-gray-200 bg-white py-10">
+      <section className="border-b border-rose-100 bg-white py-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {[
@@ -65,8 +66,8 @@ export default async function HomePage() {
               { icon: Shield, title: 'Pagamento seguro', desc: 'Pix, boleto e cartão via Mercado Pago. 100% seguro.' },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="flex items-start gap-4 rounded-xl p-4">
-                <div className="flex-shrink-0 rounded-lg bg-blue-100 p-2.5">
-                  <Icon className="h-5 w-5 text-blue-600" />
+                <div className="flex-shrink-0 rounded-lg bg-rose-100 p-2.5">
+                  <Icon className="h-5 w-5 text-rose-500" />
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
@@ -86,7 +87,7 @@ export default async function HomePage() {
               <h2 className="text-2xl font-bold text-gray-900">Novidades</h2>
               <p className="mt-1 text-sm text-gray-500">As últimas atividades adicionadas ao catálogo</p>
             </div>
-            <Link href="/atividades" className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700">
+            <Link href="/atividades" className="flex items-center gap-1 text-sm font-medium text-rose-500 hover:text-rose-600">
               Ver todas <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -98,7 +99,21 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="rounded-xl border border-dashed border-gray-300 py-16 text-center">
-              <BookOpen className="mx-auto h-10 w-10 text-gray-300" />
-              <p className="mt-3 text-sm text-gray-500">
-                Em breve, atividades incríveis a
+            <div className="rounded-xl border border-dashed border-rose-200 py-16 text-center">
+              <BookOpen className="mx-auto h-10 w-10 text-rose-300" />
+              <p className="mt-3 text-sm text-gray-500">Em breve, atividades incríveis aqui.</p>
+              <Link
+                href="/atividades"
+                className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-rose-500 hover:underline"
+              >
+                Explorar catálogo <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <NewsletterBanner />
+    </>
+  )
+}

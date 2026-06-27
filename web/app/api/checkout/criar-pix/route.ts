@@ -49,8 +49,38 @@ export async function POST(req: NextRequest) {
 
   const { items, couponId, discountAmount = 0 } = parsed.data
   const totalCents = items.reduce((s, i) => s + i.price * i.quantity, 0)
-  const discountBRL = discountAmount / 100
-  const totalBRL = Math.max(0, totalCents / 100 - discountBRL)
+
+  // ─── Desconto de indicação (server-side) ──────────────────────────────────
+  let referralDiscountCents = 0
+  let referralReferrerId: string | null = null
+  const referralCookieRaw = req.cookies.get('referral_code')?.value
+  const referralCookie = referralCookieRaw?.toUpperCase() ?? null
+
+  if (referralCookie) {
+    const { data: refRow } = await supabaseAdmin
+      .from('user_referrals')
+      .select('user_id')
+      .eq('referral_code', referralCookie)
+      .maybeSingle()
+
+    // Não pode indicar a si mesmo
+    if (refRow && refRow.user_id !== session.user.id) {
+      const { data: existingUsage } = await supabaseAdmin
+        .from('referral_usages')
+        .select('id')
+        .eq('referred_id', session.user.id)
+        .maybeSingle()
+
+      if (!existingUsage) {
+        referralDiscountCents = Math.floor(totalCents * 0.05)
+        referralReferrerId = refRow.user_id
+      }
+    }
+  }
+
+  const effectiveDiscountCents = discountAmount + referralDiscountCents
+  const effectiveDiscountBRL = effectiveDiscountCents / 100
+  const totalBRL = Math.max(0, (totalCents - effectiveDiscountCents) / 100)
 
   // 1. Criar pedido no Supabase
   const { data: order, error: orderError } = await supabaseAdmin
@@ -61,7 +91,8 @@ export async function POST(req: NextRequest) {
       payment_method: 'pix',
       total: totalCents,
       coupon_id: couponId ?? null,
-      discount_amount: discountBRL,
+      discount_amount: effectiveDiscountBRL,
+      referral_code: referralReferrerId ? referralCookie : null,
     })
     .select()
     .single()
@@ -87,45 +118,43 @@ export async function POST(req: NextRequest) {
     // Não bloqueia — o pedido já foi criado
   }
 
+  // 2b. Registrar uso de indicação e creditar indicador
+  if (referralReferrerId && referralDiscountCents > 0) {
+    const { error: usageError } = await supabaseAdmin
+      .from('referral_usages')
+      .insert({
+        referrer_id: referralReferrerId,
+        referred_id: session.user.id,
+        order_id: order.id as string,
+        discount_cents: referralDiscountCents,
+        credit_cents: 300,
+      })
+    if (!usageError) {
+      await supabaseAdmin.rpc('add_referral_credit', {
+        p_user_id: referralReferrerId,
+      })
+    }
+  }
+
   // 3. Criar pagamento Pix no Mercado Pago
-  const [firstName, ...nameParts] = (session.user.name ?? session.user.email).split(' ')
-  const lastName = nameParts.join(' ') || firstName
+  const mpClient = getMPClient()
+  const payment = new Payment(mpClient)
 
   let mpPayment
   try {
-    const paymentClient = new Payment(getMPClient())
-    mpPayment = await paymentClient.create({
+    mpPayment = await payment.create({
       body: {
         transaction_amount: totalBRL,
-        description: `TodaAtividade — ${items.length} atividade(s)`,
+        description: items.map((i) => i.title).join(', '),
         payment_method_id: 'pix',
-        payer: {
-          email: session.user.email,
-          first_name: firstName,
-          last_name: lastName,
-        },
+        payer: { email: session.user.email },
+        metadata: { order_id: order.id, user_id: session.user.id },
         external_reference: order.id as string,
-        additional_info: {
-          items: items.map((i) => ({
-            id: i.product_id,
-            title: i.title,
-            quantity: i.quantity,
-            unit_price: i.price / 100,
-          })),
-        },
       },
     })
   } catch (err) {
-    console.error('[criar-pix] MP error:', err)
-    // Marcar pedido como falho
-    await supabaseAdmin
-      .from('orders')
-      .update({ status: 'failed' })
-      .eq('id', order.id as string)
-    return NextResponse.json(
-      { error: 'Erro ao gerar pagamento Pix. Tente novamente.' },
-      { status: 502 },
-    )
+    console.error('[criar-pix] mp error:', err)
+    return NextResponse.json({ error: 'Erro ao criar pagamento Pix' }, { status: 500 })
   }
 
   // 4. Salvar payment_id no pedido
@@ -134,16 +163,14 @@ export async function POST(req: NextRequest) {
     .update({ payment_id: String(mpPayment.id) })
     .eq('id', order.id as string)
 
-  const txData = mpPayment.point_of_interaction?.transaction_data
-
-  return NextResponse.json(
-    {
-      order_id: order.id,
-      payment_id: mpPayment.id,
-      qr_code: txData?.qr_code ?? null,
-      qr_code_base64: txData?.qr_code_base64 ?? null,
-      total_cents: totalCents,
-    },
-    { status: 201 },
-  )
+  return NextResponse.json({
+    orderId: order.id,
+    paymentId: mpPayment.id,
+    qrCode: mpPayment.point_of_interaction?.transaction_data?.qr_code,
+    qrCodeBase64: mpPayment.point_of_interaction?.transaction_data?.qr_code_base64,
+    ticketUrl: mpPayment.point_of_interaction?.transaction_data?.ticket_url,
+    expiresAt: mpPayment.date_of_expiration,
+    totalBRL,
+    discountBRL: effectiveDiscountBRL,
+  })
 }

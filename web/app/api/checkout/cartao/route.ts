@@ -51,8 +51,38 @@ export async function POST(req: NextRequest) {
 
   const { cardToken, paymentMethodId, items, couponId, discountAmount = 0 } = parsed.data
   const totalCents = items.reduce((s, i) => s + i.price * i.quantity, 0)
-  const discountBRL = discountAmount / 100
-  const totalBRL = Math.max(0, totalCents / 100 - discountBRL)
+
+  // ─── Desconto de indicação (server-side) ──────────────────────────────────
+  let referralDiscountCents = 0
+  let referralReferrerId: string | null = null
+  const referralCookieRaw = req.cookies.get('referral_code')?.value
+  const referralCookie = referralCookieRaw?.toUpperCase() ?? null
+
+  if (referralCookie) {
+    const { data: refRow } = await supabaseAdmin
+      .from('user_referrals')
+      .select('user_id')
+      .eq('referral_code', referralCookie)
+      .maybeSingle()
+
+    // Não pode indicar a si mesmo
+    if (refRow && refRow.user_id !== session.user.id) {
+      const { data: existingUsage } = await supabaseAdmin
+        .from('referral_usages')
+        .select('id')
+        .eq('referred_id', session.user.id)
+        .maybeSingle()
+
+      if (!existingUsage) {
+        referralDiscountCents = Math.floor(totalCents * 0.05)
+        referralReferrerId = refRow.user_id
+      }
+    }
+  }
+
+  const effectiveDiscountCents = discountAmount + referralDiscountCents
+  const effectiveDiscountBRL = effectiveDiscountCents / 100
+  const totalBRL = Math.max(0, (totalCents - effectiveDiscountCents) / 100)
 
   // 1. Criar pedido no Supabase
   const { data: order, error: orderError } = await supabaseAdmin
@@ -63,7 +93,8 @@ export async function POST(req: NextRequest) {
       payment_method: 'credit_card',
       total: totalCents,
       coupon_id: couponId ?? null,
-      discount_amount: discountBRL,
+      discount_amount: effectiveDiscountBRL,
+      referral_code: referralReferrerId ? referralCookie : null,
     })
     .select()
     .single()
@@ -89,6 +120,25 @@ export async function POST(req: NextRequest) {
     // Não bloqueia — o pedido já foi criado
   }
 
+  // 2b. Registrar uso de indicação e creditar indicador
+  if (referralReferrerId && referralDiscountCents > 0) {
+    const { error: usageError } = await supabaseAdmin
+      .from('referral_usages')
+      .insert({
+        referrer_id: referralReferrerId,
+        referred_id: session.user.id,
+        order_id: order.id as string,
+        discount_cents: referralDiscountCents,
+        credit_cents: 300,
+      })
+    if (!usageError) {
+      await supabaseAdmin.rpc('add_referral_credit', {
+        p_user_id: referralReferrerId,
+        p_amount: 300,
+      })
+    }
+  }
+
   // 3. Processar pagamento via Mercado Pago
   const nameParts = (session.user.name ?? session.user.email).split(' ')
   const firstName = nameParts[0] ?? ''
@@ -100,65 +150,38 @@ export async function POST(req: NextRequest) {
     mpPayment = await paymentClient.create({
       body: {
         transaction_amount: totalBRL,
-        token: cardToken,
-        description: `TodaAtividade — ${items.length} atividade(s)`,
-        installments: 1,
+        description: items.map((i) => i.title).join(', '),
         payment_method_id: paymentMethodId,
+        token: cardToken,
+        installments: 1,
         payer: {
           email: session.user.email,
           first_name: firstName,
           last_name: lastName,
         },
+        metadata: { order_id: order.id, user_id: session.user.id },
         external_reference: order.id as string,
-        additional_info: {
-          items: items.map((i) => ({
-            id: i.product_id,
-            title: i.title,
-            quantity: i.quantity,
-            unit_price: i.price / 100,
-          })),
-        },
       },
-      requestOptions: { idempotencyKey: order.id as string },
     })
   } catch (err) {
-    console.error('[cartao] MP error:', err)
-    await supabaseAdmin
-      .from('orders')
-      .update({ status: 'failed' })
-      .eq('id', order.id as string)
-    return NextResponse.json(
-      { error: 'Erro ao processar pagamento. Tente novamente.' },
-      { status: 502 },
-    )
+    console.error('[cartao] mp error:', err)
+    return NextResponse.json({ error: 'Erro ao processar pagamento' }, { status: 500 })
   }
 
-  // 4. Atualizar pedido com resultado do MP
-  const mpStatus = mpPayment.status
-  const updatePayload: Record<string, unknown> = {
-    payment_id: String(mpPayment.id),
-  }
-  if (mpStatus === 'approved') {
-    updatePayload.status = 'paid'
-    updatePayload.paid_at = new Date().toISOString()
-  } else if (mpStatus === 'rejected') {
-    updatePayload.status = 'failed'
-  }
-
+  // 4. Salvar payment_id e atualizar status
   await supabaseAdmin
     .from('orders')
-    .update(updatePayload)
+    .update({
+      payment_id: String(mpPayment.id),
+      status: mpPayment.status === 'approved' ? 'paid' : mpPayment.status ?? 'pending',
+    })
     .eq('id', order.id as string)
 
-  return NextResponse.json(
-    {
-      order_id: order.id,
-      payment_id: mpPayment.id,
-      status: mpStatus,
-      status_detail: mpPayment.status_detail,
-    },
-    {
-      status: mpStatus === 'approved' ? 201 : mpStatus === 'rejected' ? 402 : 200,
-    },
-  )
+  return NextResponse.json({
+    orderId: order.id,
+    paymentId: mpPayment.id,
+    status: mpPayment.status,
+    totalBRL,
+    discountBRL: effectiveDiscountBRL,
+  })
 }

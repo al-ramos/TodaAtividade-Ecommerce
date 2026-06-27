@@ -3,6 +3,9 @@ import { supabaseAdmin } from '@/lib/supabase'
 
 const BASE_URL = 'https://www.todaatividade.com.br'
 
+const GRADE_SLUGS = ['1-ano', '2-ano', '3-ano', '4-ano', '5-ano', '6-ano', '7-ano', '8-ano', '9-ano']
+const SUBJECT_SLUGS = ['matematica', 'portugues', 'ciencias', 'historia', 'geografia', 'artes', 'educacao-fisica', 'ingles']
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     {
@@ -18,6 +21,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: `${BASE_URL}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/faq`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
+    {
       url: `${BASE_URL}/login`,
       lastModified: new Date(),
       changeFrequency: 'yearly',
@@ -29,6 +44,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'yearly',
       priority: 0.3,
     },
+    ...GRADE_SLUGS.map((grade) => ({
+      url: `${BASE_URL}/atividades/serie/${grade}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    })),
+    ...SUBJECT_SLUGS.map((subject) => ({
+      url: `${BASE_URL}/atividades/disciplina/${subject}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    })),
   ]
 
   const { data: products } = await supabaseAdmin
@@ -43,5 +70,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
-  return [...staticRoutes, ...productRoutes]
+  let articleRoutes: MetadataRoute.Sitemap = []
+  try {
+    const { data: articles } = await supabaseAdmin
+      .from('articles')
+      .select('slug, updated_at, published_at')
+      .not('published_at', 'is', null)
+
+    articleRoutes = (articles ?? []).map((article) => ({
+      url: `${BASE_URL}/blog/${article.slug}`,
+      lastModified: new Date(article.updated_at ?? article.published_at),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }))
+  } catch {
+    articleRoutes = []
+  }
+
+  return [...staticRoutes, ...productRoutes, ...articleRoutes]
 }

@@ -27,62 +27,65 @@ export default async function HomePage() {
 
       {/* Hero */}
       <section>
-        {/* Hero principal */}
-        <div className="bg-gradient-to-r from-[#FDF0F4] to-[#FAE8EF] px-4 py-10 sm:px-6 md:py-16 lg:px-8 min-h-[280px] md:min-h-[380px] lg:min-h-[420px] flex items-center">
+        {/* Hero principal — fundo transparente deixa bolinhas do body aparecerem */}
+        <div className="px-4 py-10 sm:px-6 md:py-14 lg:px-8 min-h-[280px] md:min-h-[380px] lg:min-h-[420px] flex items-center">
           <div className="mx-auto flex w-full max-w-7xl items-center gap-10 md:gap-16">
 
             {/* Coluna texto + CTAs */}
             <div className="flex flex-1 flex-col gap-5">
-              {/* Tag */}
-              <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[#E0F2F0] px-3 py-1 text-xs font-medium text-[#26A69A]">
-                🎒 Atividades pedagógicas prontas para usar
+              {/* Badge */}
+              <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-medium text-white">
+                🎒 Clube de Recursos Pedagógicos
               </span>
 
-              {/* Título */}
-              <h1 className="font-heading text-3xl font-bold leading-tight text-gray-900 sm:text-4xl md:text-[2.6rem]">
-                Recursos criados para{' '}
-                <span className="text-primary">inspirar e facilitar</span>
+              {/* Título em Dancing Script */}
+              <h1 className="font-script text-4xl leading-tight text-primary md:text-5xl">
+                Recursos para{' '}
+                <span className="font-bold">inspirar</span>{' '}
+                sua sala de aula!
               </h1>
 
               {/* Subtítulo */}
-              <p className="max-w-lg text-base text-gray-600">
-                Baixe atividades, jogos e materiais para educação infantil e fundamental — com entrega imediata.
+              <p className="max-w-md text-base text-gray-600">
+                Atividades, jogos e materiais prontos — download imediato.
               </p>
 
               {/* CTAs */}
               <div className="flex flex-wrap gap-3">
                 <Link
                   href="/atividades"
-                  className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white shadow-md hover:bg-[#9B3A58] transition-colors"
+                  className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white shadow-md hover:bg-[#9B3A58] transition-colors"
                 >
-                  Ver Atividades <ArrowRight className="h-4 w-4" />
+                  Ver todos os recursos
                 </Link>
                 <Link
                   href="#diferenciais"
-                  className="flex items-center gap-2 rounded-xl border border-[#26A69A] px-6 py-3 text-sm font-medium text-[#26A69A] hover:bg-[#E0F2F0] transition-colors"
+                  className="flex items-center gap-2 rounded-full border-2 border-[#7B3F7B] px-6 py-3 text-sm font-medium text-[#7B3F7B] hover:bg-[#7B3F7B]/10 transition-colors"
                 >
                   Como funciona <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             </div>
 
-            {/* Logo circular — desktop only */}
+            {/* Logo com círculo decorativo — desktop only */}
             <div className="hidden md:flex flex-shrink-0 items-center justify-center">
-              <Image
-                src="/logo-todaatividade.png"
-                width={220}
-                height={220}
-                alt="TodaAtividade"
-                className="rounded-full object-contain ring-4 ring-primary/30 shadow-xl bg-white/60"
-                priority
-              />
+              <div className="relative flex h-72 w-72 items-center justify-center rounded-full bg-primary/10">
+                <Image
+                  src="/logo-todaatividade.png"
+                  width={200}
+                  height={200}
+                  alt="TodaAtividade"
+                  className="rounded-full object-contain ring-4 ring-primary/30 shadow-xl bg-white/60"
+                  priority
+                />
+              </div>
             </div>
 
           </div>
         </div>
 
         {/* Faixa de benefícios */}
-        <div className="bg-[#26A69A] py-5 px-4">
+        <div className="bg-[#7B3F7B] py-5 px-4">
           <div className="mx-auto max-w-7xl grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
               { icon: Download,      title: 'Download Automático',     sub: 'PDF na hora, sem espera' },

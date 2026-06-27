@@ -63,14 +63,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </div>
             <CartDrawer />
             <Toaster richColors position="top-right" />
+            <BottomNav />
+            <InstallBanner />
+            <PushPermissionBanner />
           </CartProvider>
         </SessionProvider>
         <MetaPixel />
         <Analytics />
         <SpeedInsights />
-        <BottomNav />
-        <InstallBanner />
-        <PushPermissionBanner />
       </body>
     </html>
   )

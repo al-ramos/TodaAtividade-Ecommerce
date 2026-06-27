@@ -26,63 +26,15 @@ export default async function HomePage() {
       <OrganizationJsonLd />
 
       {/* Hero */}
-      <section>
-        {/* Hero principal — fundo transparente deixa bolinhas do body aparecerem */}
-        <div className="px-4 py-10 sm:px-6 md:py-14 lg:px-8 min-h-[280px] md:min-h-[380px] lg:min-h-[420px] flex items-center">
-          <div className="mx-auto flex w-full max-w-7xl items-center gap-10 md:gap-16">
-
-            {/* Coluna texto + CTAs */}
-            <div className="flex flex-1 flex-col gap-5">
-              {/* Badge */}
-              <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-medium text-white">
-                🎒 Clube de Recursos Pedagógicos
-              </span>
-
-              {/* Título em Dancing Script */}
-              <h1 className="font-script text-4xl leading-tight text-primary md:text-5xl">
-                Recursos para{' '}
-                <span className="font-bold">inspirar</span>{' '}
-                sua sala de aula!
-              </h1>
-
-              {/* Subtítulo */}
-              <p className="max-w-md text-base text-gray-600">
-                Atividades, jogos e materiais prontos — download imediato.
-              </p>
-
-              {/* CTAs */}
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href="/atividades"
-                  className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white shadow-md hover:bg-[#9B3A58] transition-colors"
-                >
-                  Ver todos os recursos
-                </Link>
-                <Link
-                  href="#diferenciais"
-                  className="flex items-center gap-2 rounded-full border-2 border-[#7B3F7B] px-6 py-3 text-sm font-medium text-[#7B3F7B] hover:bg-[#7B3F7B]/10 transition-colors"
-                >
-                  Como funciona <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Logo com círculo decorativo — desktop only */}
-            <div className="hidden md:flex flex-shrink-0 items-center justify-center">
-              <div className="relative flex h-72 w-72 items-center justify-center rounded-full bg-primary/10">
-                <Image
-                  src="/logo-todaatividade.png"
-                  width={200}
-                  height={200}
-                  alt="TodaAtividade"
-                  className="rounded-full object-contain ring-4 ring-primary/30 shadow-xl bg-white/60"
-                  priority
-                />
-              </div>
-            </div>
-
-          </div>
-        </div>
+      <section className="w-full">
+        <Image
+          src="/banner-hero.png"
+          alt="TodaAtividade — Recursos Pedagógicos"
+          width={1440}
+          height={520}
+          priority
+          className="w-full h-auto"
+        />
 
         {/* Faixa de benefícios */}
         <div className="bg-[#7B3F7B] py-5 px-4">

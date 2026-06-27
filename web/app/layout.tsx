@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Nunito, Playfair_Display } from 'next/font/google'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import SessionProvider from '@/components/auth/SessionProvider'
@@ -18,7 +18,8 @@ import BottomNav from '@/components/pwa/BottomNav'
 import PushPermissionBanner from '@/components/pwa/PushPermissionBanner'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+const nunito = Nunito({ subsets: ['latin'], variable: '--font-nunito', display: 'swap' })
+const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair', display: 'swap' })
 
 const BASE_URL = 'https://www.todaatividade.com.br'
 
@@ -52,8 +53,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const session = await getServerSession(authOptions)
 
   return (
-    <html lang="pt-BR" className={inter.variable}>
-      <body className="min-h-screen bg-gray-50 antialiased pb-16 lg:pb-0">
+    <html lang="pt-BR" className={`${nunito.variable} ${playfair.variable}`}>
+      <body className="min-h-screen antialiased pb-16 lg:pb-0 font-sans">
         <SessionProvider session={session}>
           <CartProvider>
             <div className="flex min-h-screen flex-col">

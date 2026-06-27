@@ -25,23 +25,23 @@ export default async function HomePage() {
       <OrganizationJsonLd />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-rose-400 to-rose-600 py-20 text-white">
+      <section className="bg-gradient-to-br from-[#B54E6E] to-[#E8A0B0] py-20 text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-sm font-medium">
               <Star className="h-3.5 w-3.5 fill-yellow-300 text-yellow-300" />
               +500 atividades disponíveis
             </span>
-            <h1 className="mt-4 text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
+            <h1 className="mt-4 text-4xl font-heading font-bold leading-tight sm:text-5xl lg:text-6xl">
               Atividades escolares prontas para imprimir
             </h1>
-            <p className="mt-6 text-lg text-rose-100">
+            <p className="mt-6 text-lg text-[#FDF0F4]">
               Do 1 ao 9 ano do ensino fundamental. Visualize a prévia, compre com Pix ou cartão e baixe o PDF na hora.
             </p>
             <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link
                 href="/atividades"
-                className="flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-base font-semibold text-rose-600 shadow-lg hover:bg-rose-50 transition-colors"
+                className="flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-base font-semibold text-primary shadow-lg hover:bg-primary-veryLight transition-colors"
               >
                 Ver catálogo <ArrowRight className="h-4 w-4" />
               </Link>
@@ -57,7 +57,7 @@ export default async function HomePage() {
       </section>
 
       {/* Diferenciais */}
-      <section className="border-b border-rose-100 bg-white py-10">
+      <section className="border-b border-border bg-white py-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {[
@@ -66,8 +66,8 @@ export default async function HomePage() {
               { icon: Shield, title: 'Pagamento seguro', desc: 'Pix, boleto e cartão via Mercado Pago. 100% seguro.' },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="flex items-start gap-4 rounded-xl p-4">
-                <div className="flex-shrink-0 rounded-lg bg-rose-100 p-2.5">
-                  <Icon className="h-5 w-5 text-rose-500" />
+                <div className="flex-shrink-0 rounded-lg bg-primary-veryLight p-2.5">
+                  <Icon className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
@@ -87,7 +87,7 @@ export default async function HomePage() {
               <h2 className="text-2xl font-bold text-gray-900">Novidades</h2>
               <p className="mt-1 text-sm text-gray-500">As últimas atividades adicionadas ao catálogo</p>
             </div>
-            <Link href="/atividades" className="flex items-center gap-1 text-sm font-medium text-rose-500 hover:text-rose-600">
+            <Link href="/atividades" className="flex items-center gap-1 text-sm font-medium text-primary hover:text-[#9B3A58]">
               Ver todas <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -99,12 +99,12 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="rounded-xl border border-dashed border-rose-200 py-16 text-center">
-              <BookOpen className="mx-auto h-10 w-10 text-rose-300" />
+            <div className="rounded-xl border border-dashed border-border py-16 text-center">
+              <BookOpen className="mx-auto h-10 w-10 text-primary-light" />
               <p className="mt-3 text-sm text-gray-500">Em breve, atividades incríveis aqui.</p>
               <Link
                 href="/atividades"
-                className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-rose-500 hover:underline"
+                className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
               >
                 Explorar catálogo <ArrowRight className="h-3.5 w-3.5" />
               </Link>

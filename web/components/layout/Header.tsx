@@ -15,13 +15,13 @@ export default function Header() {
   const { count, openCart } = useCart()
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-rose-200 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 font-bold text-rose-500">
+        <Link href="/" className="flex items-center gap-2 font-bold text-primary font-heading">
           <BookOpen className="h-6 w-6" />
-          <span className="text-lg">Toda<span className="text-rose-900">Atividade</span></span>
+          <span className="text-lg">Toda<span className="text-primary">Atividade</span></span>
         </Link>
 
         {/* Search — desktop only */}
@@ -31,22 +31,22 @@ export default function Header() {
 
         {/* Nav desktop */}
         <nav className="hidden items-center gap-6 md:flex">
-          <Link href="/atividades" className="text-sm font-medium text-gray-600 hover:text-rose-500 transition-colors">
+          <Link href="/atividades" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
             Catálogo
           </Link>
-          <Link href="/atividades?grade=1ano" className="text-sm font-medium text-gray-600 hover:text-rose-500 transition-colors">
+          <Link href="/atividades?grade=1ano" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
             Anos Iniciais
           </Link>
-          <Link href="/atividades?grade=6ano" className="text-sm font-medium text-gray-600 hover:text-rose-500 transition-colors">
+          <Link href="/atividades?grade=6ano" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
             Anos Finais
           </Link>
-          <Link href="/bundles" className="text-sm font-medium text-gray-600 hover:text-rose-500 transition-colors">
+          <Link href="/bundles" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
             Kits
           </Link>
-          <Link href="/blog" className="text-sm font-medium text-gray-600 hover:text-rose-500 transition-colors">
+          <Link href="/blog" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
             Blog
           </Link>
-          <Link href="/faq" className="text-sm font-medium text-gray-600 hover:text-rose-500 transition-colors">
+          <Link href="/faq" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
             FAQ
           </Link>
         </nav>
@@ -55,12 +55,12 @@ export default function Header() {
         <div className="flex items-center gap-3">
           <button
             onClick={openCart}
-            className="relative rounded-full p-2 text-gray-600 hover:bg-rose-50 hover:text-rose-500 transition-colors"
+            className="relative rounded-full p-2 text-gray-600 hover:bg-primary-veryLight hover:text-primary transition-colors"
             aria-label="Carrinho"
           >
             <ShoppingCart className="h-5 w-5" />
             {count > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">
+              <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
                 {count > 9 ? '9+' : count}
               </span>
             )}
@@ -68,7 +68,7 @@ export default function Header() {
 
           {session ? (
             <div className="relative group">
-              <button className="flex items-center gap-2 rounded-full p-1 hover:bg-rose-50 transition-colors">
+              <button className="flex items-center gap-2 rounded-full p-1 hover:bg-primary-veryLight transition-colors">
                 {session.user?.image ? (
                   <Image
                     src={session.user.image}
@@ -78,29 +78,29 @@ export default function Header() {
                     className="rounded-full"
                   />
                 ) : (
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-100 text-rose-500 text-sm font-medium">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-light text-white text-sm font-medium">
                     {session.user?.name?.charAt(0).toUpperCase() ?? 'U'}
                   </div>
                 )}
               </button>
 
               {/* Dropdown */}
-              <div className="absolute right-0 top-full mt-2 w-48 hidden group-hover:block rounded-xl border border-rose-100 bg-white shadow-lg">
-                <div className="border-b border-rose-100 px-4 py-3">
+              <div className="absolute right-0 top-full mt-2 w-48 hidden group-hover:block rounded-xl border border-border bg-white shadow-lg">
+                <div className="border-b border-border px-4 py-3">
                   <p className="text-sm font-medium text-gray-900 truncate">{session.user?.name}</p>
                   <p className="text-xs text-gray-500 truncate">{session.user?.email}</p>
                 </div>
                 <div className="py-1">
-                  <Link href="/perfil" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-rose-50">
+                  <Link href="/perfil" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-primary-veryLight">
                     <User className="h-4 w-4" /> Meu perfil
                   </Link>
-                  <Link href="/minha-conta/favoritos" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-rose-50">
+                  <Link href="/minha-conta/favoritos" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-primary-veryLight">
                     <Heart className="h-4 w-4" /> Favoritos
                   </Link>
-                  <Link href="/minha-conta/pedidos" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-rose-50">
+                  <Link href="/minha-conta/pedidos" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-primary-veryLight">
                     <ShoppingCart className="h-4 w-4" /> Minhas compras
                   </Link>
-                  <Link href="/minha-conta/assinatura" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-rose-50">
+                  <Link href="/minha-conta/assinatura" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-primary-veryLight">
                     <Sparkles className="h-4 w-4 text-yellow-500" /> Assinatura
                   </Link>
                   <button
@@ -115,7 +115,7 @@ export default function Header() {
           ) : (
             <Link
               href="/login"
-              className="rounded-xl bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600 transition-colors"
+              className="rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-[#9B3A58] transition-colors"
             >
               Entrar
             </Link>
@@ -123,7 +123,7 @@ export default function Header() {
 
           {/* Mobile menu toggle */}
           <button
-            className="rounded-lg p-2 text-gray-600 hover:bg-rose-50 md:hidden"
+            className="rounded-lg p-2 text-gray-600 hover:bg-primary-veryLight md:hidden"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -132,7 +132,7 @@ export default function Header() {
       </div>
 
       {/* Mobile nav */}
-      <div className={cn('md:hidden border-t border-rose-100 bg-white px-4 pb-4', menuOpen ? 'block' : 'hidden')}>
+      <div className={cn('md:hidden border-t border-border bg-white px-4 pb-4', menuOpen ? 'block' : 'hidden')}>
         <nav className="flex flex-col gap-3 pt-3">
           <Link href="/atividades" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>
             Catálogo

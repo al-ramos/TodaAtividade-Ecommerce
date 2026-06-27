@@ -10,14 +10,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        border: 'hsl(var(--border))',
+        border: '#F4C0D1',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+          DEFAULT: '#B54E6E',
+          light: '#E8A0B0',
+          veryLight: '#FDF0F4',
+          foreground: '#ffffff',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -28,7 +30,8 @@ const config: Config = {
           foreground: 'hsl(var(--muted-foreground))',
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
+          DEFAULT: '#26A69A',
+          light: '#4DB6AC',
           foreground: 'hsl(var(--accent-foreground))',
         },
         destructive: {
@@ -48,7 +51,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-nunito)', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-playfair)', 'Georgia', 'serif'],
       },
       borderRadius: {
         lg: 'var(--radius)',

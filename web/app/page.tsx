@@ -62,12 +62,15 @@ export default async function HomePage() {
 
           {/* DIREITA */}
           <div className="hidden md:flex flex-col items-center justify-center flex-shrink-0">
-            <div className="relative w-56 h-56">
-              <div className="absolute inset-0 rounded-full border-2 border-[#E8C4B8]" />
-              <div className="absolute inset-3 rounded-full border border-[#F0D0C0]/70" />
-              <div className="absolute inset-8 rounded-full bg-white/80 border border-[#E8C4B8] flex flex-col items-center justify-center shadow-sm">
-                <Image src="/logo-todaatividade.png" width={70} height={70} alt="TodaAtividade" className="rounded-full opacity-90" priority />
-              </div>
+            <div className="w-52 h-52 rounded-full border-2 border-[#E8C4B8] bg-white/70 flex items-center justify-center shadow-sm">
+              <Image
+                src="/logo-todaatividade.png"
+                width={120}
+                height={120}
+                alt="TodaAtividade"
+                className="rounded-full"
+                priority
+              />
             </div>
             <p className="mt-3 text-[#C8943A] text-xs tracking-widest uppercase">todaatividade.com.br</p>
           </div>

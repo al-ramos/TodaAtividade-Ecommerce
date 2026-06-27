@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { ArrowRight, BookOpen, Shield, Download, Star } from 'lucide-react'
+import Image from 'next/image'
+import { ArrowRight, BookOpen, Shield, Download } from 'lucide-react'
 import { createSupabaseServerClient } from '@/lib/supabase'
 import ProductCard from '@/components/catalog/ProductCard'
 import type { Product } from '@/lib/types'
@@ -25,34 +26,30 @@ export default async function HomePage() {
       <OrganizationJsonLd />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#F8D7E3] to-[#FDF0F4] py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-              +500 atividades disponíveis
-            </span>
-            <h1 className="mt-4 text-4xl font-heading font-bold leading-tight text-[#B54E6E] sm:text-5xl lg:text-6xl">
-              Atividades escolares prontas para imprimir
-            </h1>
-            <p className="mt-6 text-lg text-[#B54E6E]/70">
-              Do 1 ao 9 ano do ensino fundamental. Visualize a prévia, compre com Pix ou cartão e baixe o PDF na hora.
-            </p>
-            <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Link
-                href="/atividades"
-                className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-base font-semibold text-white shadow-lg hover:bg-[#9B3A58] transition-colors"
-              >
-                Ver catálogo <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href="/atividades?grade=1ano"
-                className="flex items-center gap-2 rounded-xl border border-primary px-6 py-3 text-base font-medium text-primary hover:bg-primary/10 transition-colors"
-              >
-                Anos Iniciais
-              </Link>
-            </div>
-          </div>
+      <section>
+        <div className="relative w-full">
+          <Image
+            src="/banner-hero.png"
+            width={1200}
+            height={400}
+            alt="TodaAtividade - Materiais Pedagógicos"
+            className="w-full h-auto"
+            priority
+          />
+        </div>
+        <div className="flex flex-col items-center gap-4 py-6 sm:flex-row sm:justify-center px-4">
+          <Link
+            href="/atividades"
+            className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-base font-semibold text-white shadow-lg hover:bg-[#9B3A58] transition-colors"
+          >
+            Ver catálogo <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link
+            href="/atividades?grade=1ano"
+            className="flex items-center gap-2 rounded-xl border border-primary px-6 py-3 text-base font-medium text-primary hover:bg-primary/10 transition-colors"
+          >
+            Anos Iniciais
+          </Link>
         </div>
       </section>
 
@@ -84,6 +81,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-8 flex items-center justify-between">
             <div>
+              <p className="font-script text-2xl text-primary">Novas atividades para sua sala!</p>
               <h2 className="text-2xl font-bold text-gray-900">Novidades</h2>
               <p className="mt-1 text-sm text-gray-500">As últimas atividades adicionadas ao catálogo</p>
             </div>

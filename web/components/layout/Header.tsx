@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { ShoppingCart, User, LogOut, BookOpen, Menu, X, Heart, Sparkles } from 'lucide-react'
+import { ShoppingCart, User, LogOut, Menu, X, Heart, Sparkles } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useCart } from '@/lib/cart-context'
@@ -19,9 +19,15 @@ export default function Header() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 font-bold text-primary font-heading">
-          <BookOpen className="h-6 w-6" />
-          <span className="text-lg">Toda<span className="text-primary">Atividade</span></span>
+        <Link href="/" className="flex-shrink-0">
+          <Image
+            src="/logo-todaatividade.png"
+            width={80}
+            height={80}
+            alt="TodaAtividade"
+            className="h-12 w-12 object-contain"
+            priority
+          />
         </Link>
 
         {/* Search — desktop only */}

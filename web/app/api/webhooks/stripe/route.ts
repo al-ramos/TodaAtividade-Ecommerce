@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { supabaseAdmin } from '@/lib/supabase'
 
-// Desabilita o body parser do Next.js — precisamos do raw body para validar a assinatura
-export const config = { api: { bodyParser: false } }
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? 'sk_test_placeholder', {
   apiVersion: '2024-06-20',
 })
 

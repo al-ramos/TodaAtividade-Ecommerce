@@ -4,7 +4,7 @@ import Stripe from 'stripe'
 import { authOptions } from '@/lib/auth'
 import { getUserSubscriptionStatus } from '@/lib/subscription'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? 'sk_test_placeholder', {
   apiVersion: '2024-06-20',
 })
 

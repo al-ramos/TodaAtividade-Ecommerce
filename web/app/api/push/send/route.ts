@@ -4,12 +4,6 @@ import webpush from 'web-push'
 import { authOptions } from '@/lib/auth'
 import { supabaseAdmin } from '@/lib/supabase'
 
-webpush.setVapidDetails(
-  process.env.VAPID_SUBJECT ?? 'mailto:suporte@todaatividade.com.br',
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-  process.env.VAPID_PRIVATE_KEY!,
-)
-
 function isAuthorized(req: NextRequest, role?: string): boolean {
   const secret = process.env.INTERNAL_SECRET
   if (secret && req.headers.get('x-internal-secret') === secret) return true
@@ -17,6 +11,12 @@ function isAuthorized(req: NextRequest, role?: string): boolean {
 }
 
 export async function POST(req: NextRequest) {
+  webpush.setVapidDetails(
+    process.env.VAPID_SUBJECT ?? 'mailto:suporte@todaatividade.com.br',
+    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+    process.env.VAPID_PRIVATE_KEY!,
+  )
+
   const session = await getServerSession(authOptions)
   const userRole = (session?.user as { role?: string } | null)?.role
 

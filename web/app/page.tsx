@@ -24,31 +24,8 @@ export default async function HomePage() {
     <>
       <OrganizationJsonLd />
 
-      {/* Barra social teal */}
-      <div className="bg-[#5EEAD4] py-3">
-        <div className="flex items-center justify-center gap-4">
-          {[
-            { href: 'https://instagram.com/todaatividade', icon: '📸', label: 'Instagram' },
-            { href: 'https://wa.me/5511969622111', icon: '💬', label: 'WhatsApp' },
-            { href: '/atividades', icon: '🛍️', label: 'Loja' },
-            { href: '/atividades', icon: '⬇️', label: 'Downloads' },
-          ].map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              target={item.href.startsWith('http') ? '_blank' : undefined}
-              rel="noopener noreferrer"
-              aria-label={item.label}
-              className="w-10 h-10 rounded-full bg-[#1a1a2e] flex items-center justify-center text-lg hover:opacity-80 transition-opacity"
-            >
-              {item.icon}
-            </a>
-          ))}
-        </div>
-      </div>
-
-      {/* Benefit strip branco */}
-      <div className="bg-white py-6 border-b border-gray-100">
+      {/* Benefit strip */}
+      <div className="bg-[#FDF0F4] py-6 border-b border-[#F4C0D1]">
         <div className="max-w-4xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           {[
             { icon: '⬇️', title: 'Download Automático', sub: 'PDF na hora', href: undefined },

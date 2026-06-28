@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight, BookOpen, Shield, Download } from 'lucide-react'
 import { createSupabaseServerClient } from '@/lib/supabase'
 import ProductCard from '@/components/catalog/ProductCard'
@@ -23,6 +24,49 @@ export default async function HomePage() {
   return (
     <>
       <OrganizationJsonLd />
+
+      {/* BANNER BOAS-VINDAS */}
+      <section className="relative overflow-hidden bg-[#FDF0F4] py-10 px-6">
+        {/* Bolinhas decorativas */}
+        <div className="absolute top-4 left-8 w-6 h-6 rounded-full bg-[#f9c4d4] opacity-60" />
+        <div className="absolute top-12 left-24 w-4 h-4 rounded-full bg-[#fde68a] opacity-60" />
+        <div className="absolute bottom-6 left-16 w-5 h-5 rounded-full bg-[#c4b5fd] opacity-60" />
+        <div className="absolute top-6 right-20 w-5 h-5 rounded-full bg-[#b8e8d4] opacity-60" />
+        <div className="absolute bottom-8 right-10 w-6 h-6 rounded-full bg-[#fde68a] opacity-60" />
+        <div className="absolute top-16 right-40 w-3 h-3 rounded-full bg-[#f9c4d4] opacity-60" />
+
+        <div className="max-w-5xl mx-auto flex items-center gap-10">
+          {/* Texto */}
+          <div className="flex-1 space-y-3">
+            <p className="font-script text-[#B54E6E] text-lg">✦ Recursos Pedagógicos ✦</p>
+            <h2 className="font-script text-5xl md:text-6xl text-[#8B3A55] leading-tight">
+              Seja<br />Bem-vindo(a)!
+            </h2>
+            <p className="font-script text-[#9B6070] text-xl leading-snug">
+              Recursos Pedagógicos que<br />
+              <span className="text-[#B54E6E] font-semibold">transformam</span> sua sala de aula!
+            </p>
+            <div className="flex gap-3 pt-2">
+              <Link href="/atividades" className="bg-[#B54E6E] text-white font-script text-sm px-6 py-2.5 rounded-full hover:bg-[#9A3D5C] transition-colors shadow-sm">
+                Ver Recursos →
+              </Link>
+            </div>
+          </div>
+
+          {/* Logo */}
+          <div className="hidden md:flex flex-col items-center gap-3 flex-shrink-0">
+            <div className="relative">
+              <div className="w-52 h-52 rounded-full bg-white border-4 border-[#E8C4B8] shadow-md flex items-center justify-center">
+                <Image src="/logo-todaatividade.png" width={130} height={130} alt="TodaAtividade" className="rounded-full" priority />
+              </div>
+              <span className="absolute -top-2 -right-2 text-2xl">⭐</span>
+              <span className="absolute -bottom-1 -left-2 text-xl">🌸</span>
+              <span className="absolute top-4 -left-4 text-lg">✨</span>
+            </div>
+            <p className="font-script text-[#C8943A] text-sm tracking-wide">todaatividade.com.br</p>
+          </div>
+        </div>
+      </section>
 
       {/* Benefit strip */}
       <div className="bg-[#FDF0F4] py-6 border-b border-[#F4C0D1]">

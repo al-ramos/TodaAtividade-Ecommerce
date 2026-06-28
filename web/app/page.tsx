@@ -35,11 +35,11 @@ export default async function HomePage() {
           ].map((item) => {
             const content = (
               <>
-                <div className="w-12 h-12 rounded-full border-2 border-[#c4b5fd] flex items-center justify-center text-xl mx-auto">
+                <div className="w-12 h-12 rounded-full border-2 border-primary/40 flex items-center justify-center text-xl mx-auto">
                   {item.icon}
                 </div>
-                <p className="text-[#7c3aed] text-sm font-semibold">{item.title}</p>
-                <p className="text-gray-400 text-xs">{item.sub}</p>
+                <p className="font-script text-base text-primary font-semibold">{item.title}</p>
+                <p className="font-script text-xs text-gray-500">{item.sub}</p>
               </>
             )
             return item.href ? (
@@ -67,7 +67,7 @@ export default async function HomePage() {
                   <Icon className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
+                  <h3 className="font-script text-base font-semibold text-gray-900">{title}</h3>
                   <p className="mt-0.5 text-sm text-gray-500">{desc}</p>
                 </div>
               </div>
@@ -82,7 +82,7 @@ export default async function HomePage() {
           <div className="mb-8 flex items-center justify-between">
             <div>
               <p className="font-script text-2xl text-primary">Novas atividades para sua sala!</p>
-              <h2 className="text-2xl font-bold text-gray-900">Novidades</h2>
+              <h2 className="font-script text-2xl font-bold text-gray-900">Novidades</h2>
               <p className="mt-1 text-sm text-gray-500">As últimas atividades adicionadas ao catálogo</p>
             </div>
             <Link href="/atividades" className="flex items-center gap-1 text-sm font-medium text-primary hover:text-[#9B3A58]">

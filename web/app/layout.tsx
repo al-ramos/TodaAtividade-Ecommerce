@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Nunito, Playfair_Display, Dancing_Script } from 'next/font/google'
+import { Nunito, Playfair_Display, Edu_SA_Beginner } from 'next/font/google'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import SessionProvider from '@/components/auth/SessionProvider'
@@ -20,7 +20,7 @@ import './globals.css'
 
 const nunito = Nunito({ subsets: ['latin'], variable: '--font-nunito', display: 'swap' })
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair', display: 'swap' })
-const dancingScript = Dancing_Script({ subsets: ['latin'], variable: '--font-script', display: 'swap' })
+const eduSA = Edu_SA_Beginner({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-script', display: 'swap' })
 
 const BASE_URL = 'https://www.todaatividade.com.br'
 
@@ -54,7 +54,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const session = await getServerSession(authOptions)
 
   return (
-    <html lang="pt-BR" className={`${nunito.variable} ${playfair.variable} ${dancingScript.variable}`}>
+    <html lang="pt-BR" className={`${nunito.variable} ${playfair.variable} ${eduSA.variable}`}>
       <body className="min-h-screen antialiased pb-16 lg:pb-0 font-sans">
         <SessionProvider session={session}>
           <CartProvider>

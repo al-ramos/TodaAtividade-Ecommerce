@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { ArrowRight, BookOpen, Shield, Download } from 'lucide-react'
 import { createSupabaseServerClient } from '@/lib/supabase'
 import ProductCard from '@/components/catalog/ProductCard'
@@ -22,93 +21,71 @@ export default async function HomePage() {
   const products = await getFeaturedProducts()
 
   return (
-    <>
+    <div style={{
+      backgroundImage: `radial-gradient(circle, #f9c4d4 1.5px, transparent 1.5px),
+        radial-gradient(circle, #b8e8d4 1.5px, transparent 1.5px),
+        radial-gradient(circle, #fde68a 1.5px, transparent 1.5px),
+        radial-gradient(circle, #c4b5fd 1.5px, transparent 1.5px)`,
+      backgroundSize: '60px 60px, 60px 60px, 60px 60px, 60px 60px',
+      backgroundPosition: '0 0, 30px 30px, 15px 15px, 45px 45px',
+      backgroundColor: '#ffffff',
+    }}>
       <OrganizationJsonLd />
 
-      {/* HERO */}
-      <section className="relative w-full overflow-hidden bg-[#FDF8F5]" style={{ minHeight: '400px' }}>
-        <div className="absolute inset-4 border border-[#E8C4B8] pointer-events-none" />
-        <div className="absolute inset-6 border border-[#F0D0C0]/50 pointer-events-none" />
-
-        <div className="relative z-10 max-w-6xl mx-auto px-8 py-14 flex items-center gap-12">
-          {/* ESQUERDA */}
-          <div className="flex-1 space-y-4">
-            <span className="inline-block text-xs tracking-widest uppercase text-[#B54E6E] border border-[#E8C4B8] px-4 py-1 rounded-full bg-white/60">
-              ✦ Recursos Pedagógicos ✦
-            </span>
-            <h1 className="font-script text-5xl md:text-6xl leading-tight text-[#8B3A55]">
-              Toda Atividade
-            </h1>
-            <div className="flex items-center gap-3">
-              <div className="h-px bg-[#E8C4B8] w-20" />
-              <span className="text-[#C8943A] text-sm">✦</span>
-              <div className="h-px bg-[#E8C4B8] w-20" />
-            </div>
-            <p className="text-[#9B6070] text-lg italic font-light leading-relaxed max-w-md">
-              Materiais Pedagógicos,<br />
-              feito com carinho, para ensinar e inspirar!
-            </p>
-            <p className="text-[#B89098] text-sm tracking-wide">
-              Download imediato · Alta qualidade · Feito com carinho
-            </p>
-            <div className="flex items-center gap-4 pt-2">
-              <Link href="/atividades" className="bg-[#B54E6E] text-white text-sm px-7 py-3 rounded-full hover:bg-[#9A3D5C] transition-colors shadow-sm">
-                Ver Recursos
-              </Link>
-              <Link href="#diferenciais" className="text-[#B54E6E] text-sm border border-[#E8C4B8] px-6 py-3 rounded-full hover:bg-[#FDF0F4] transition-colors">
-                Como funciona →
-              </Link>
-            </div>
-          </div>
-
-          {/* DIREITA */}
-          <div className="hidden md:flex flex-col items-center justify-center flex-shrink-0">
-            <div className="w-52 h-52 rounded-full border-2 border-[#E8C4B8] bg-white/70 flex items-center justify-center shadow-sm">
-              <Image
-                src="/logo-todaatividade.png"
-                width={120}
-                height={120}
-                alt="TodaAtividade"
-                className="rounded-full"
-                priority
-              />
-            </div>
-            <p className="mt-3 text-[#C8943A] text-xs tracking-widest uppercase">todaatividade.com.br</p>
-          </div>
-        </div>
-      </section>
-
-      {/* BENEFIT STRIP */}
-      <div className="bg-[#7B3F7B] py-4">
-        <div className="max-w-6xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Barra social teal */}
+      <div className="bg-[#5EEAD4] py-3">
+        <div className="flex items-center justify-center gap-4">
           {[
-            { icon: '📥', title: 'Download Automático', sub: 'PDF na hora, sem espera', href: undefined },
+            { href: 'https://instagram.com/todaatividade', icon: '📸', label: 'Instagram' },
+            { href: 'https://wa.me/5511969622111', icon: '💬', label: 'WhatsApp' },
+            { href: '/atividades', icon: '🛍️', label: 'Loja' },
+            { href: '/atividades', icon: '⬇️', label: 'Downloads' },
+          ].map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              target={item.href.startsWith('http') ? '_blank' : undefined}
+              rel="noopener noreferrer"
+              aria-label={item.label}
+              className="w-10 h-10 rounded-full bg-[#1a1a2e] flex items-center justify-center text-lg hover:opacity-80 transition-opacity"
+            >
+              {item.icon}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* Benefit strip branco */}
+      <div className="bg-white py-6 border-b border-gray-100">
+        <div className="max-w-4xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          {[
+            { icon: '⬇️', title: 'Download Automático', sub: 'PDF na hora', href: undefined },
             { icon: '🎨', title: 'Recursos Pedagógicos', sub: 'Conteúdo de qualidade', href: undefined },
-            { icon: '⚡', title: 'Compra Rápida', sub: 'Pix, cartão ou boleto', href: undefined },
-            { icon: '💬', title: 'Suporte WhatsApp', sub: 'Atendimento rápido', href: 'https://wa.me/5511969622111' },
+            { icon: '💳', title: 'PIX Rápido', sub: 'Pagamento fácil', href: undefined },
+            { icon: '💬', title: 'WhatsApp', sub: 'Clique aqui', href: 'https://wa.me/5511969622111' },
           ].map((item) => {
-            const inner = (
+            const content = (
               <>
-                <span className="text-2xl">{item.icon}</span>
-                <div>
-                  <p className="text-white text-sm font-semibold">{item.title}</p>
-                  <p className="text-purple-200 text-xs">{item.sub}</p>
+                <div className="w-12 h-12 rounded-full border-2 border-[#c4b5fd] flex items-center justify-center text-xl mx-auto">
+                  {item.icon}
                 </div>
+                <p className="text-[#7c3aed] text-sm font-semibold">{item.title}</p>
+                <p className="text-gray-400 text-xs">{item.sub}</p>
               </>
             )
             return item.href ? (
-              <a key={item.title} href={item.href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                {inner}
+              <a key={item.title} href={item.href} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 hover:opacity-80 transition-opacity">
+                {content}
               </a>
             ) : (
-              <div key={item.title} className="flex items-center gap-3">{inner}</div>
+              <div key={item.title} className="flex flex-col items-center gap-2">{content}</div>
             )
           })}
         </div>
       </div>
 
       {/* Diferenciais */}
-      <section id="diferenciais" className="border-b border-border bg-white py-10">
+      <section id="diferenciais" className="border-b border-border bg-white/80 py-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {[
@@ -166,6 +143,6 @@ export default async function HomePage() {
       </section>
 
       <NewsletterBanner />
-    </>
+    </div>
   )
 }

@@ -21,15 +21,7 @@ export default async function HomePage() {
   const products = await getFeaturedProducts()
 
   return (
-    <div style={{
-      backgroundImage: `radial-gradient(circle, #f9c4d4 1.5px, transparent 1.5px),
-        radial-gradient(circle, #b8e8d4 1.5px, transparent 1.5px),
-        radial-gradient(circle, #fde68a 1.5px, transparent 1.5px),
-        radial-gradient(circle, #c4b5fd 1.5px, transparent 1.5px)`,
-      backgroundSize: '60px 60px, 60px 60px, 60px 60px, 60px 60px',
-      backgroundPosition: '0 0, 30px 30px, 15px 15px, 45px 45px',
-      backgroundColor: '#ffffff',
-    }}>
+    <>
       <OrganizationJsonLd />
 
       {/* Barra social teal */}
@@ -85,7 +77,7 @@ export default async function HomePage() {
       </div>
 
       {/* Diferenciais */}
-      <section id="diferenciais" className="border-b border-border bg-white/80 py-10">
+      <section id="diferenciais" className="border-b border-border bg-white py-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {[
@@ -143,6 +135,6 @@ export default async function HomePage() {
       </section>
 
       <NewsletterBanner />
-    </div>
+    </>
   )
 }
